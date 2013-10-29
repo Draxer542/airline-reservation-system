@@ -28,50 +28,8 @@ public class Demo {
   
    
    public static void main(String[] args) {
-	   Connection conn = null;
-	   Statement stmt = null;
-	   try{
-	      //STEP 2: Register JDBC driver
-	      Class.forName("com.mysql.jdbc.Driver");
-
-	      //STEP 3: Open a connection
-	      System.out.println("Connecting to database...");
-	      conn = DriverManager.getConnection(DB_URL, USER, PASS);
-
-	      //STEP 4: Execute a query
-	      System.out.println("Creating database...");
-	      stmt = conn.createStatement();
-	      
-	    String queryDrop = "DROP DATABASE IF EXISTS cs";
-	    Statement stmtDrop = conn.createStatement();
-	    stmtDrop.execute(queryDrop);
-	    create();
-
-
-	      String sql = "CREATE DATABASE cs";
-	      stmt.executeUpdate(sql);
-	      System.out.println("Database created successfully...");
-	   }catch(SQLException se){
-	      //Handle errors for JDBC
-	      se.printStackTrace();
-	   }catch(Exception e){
-	      //Handle errors for Class.forName
-	      e.printStackTrace();
-	   }finally{
-	      //finally block used to close resources
-	      try{
-	         if(stmt!=null)
-	            stmt.close();
-	      }catch(SQLException se2){
-	      }// nothing we can do
-	      try{
-	         if(conn!=null)
-	            conn.close();
-	      }catch(SQLException se){
-	         se.printStackTrace();
-	      }//end finally try
-	   }//end try
-   
+	   
+   create();
    System.out.println("Goodbye!");
 }//end main
    
@@ -163,8 +121,9 @@ public class Demo {
                                "Departure Time", "Gate"};
            
            
-           //getFlight();
-           Object[][] data = {
+           
+           Object[][] data = getFlight();
+           /*Object[][] data = {
                {101, "Tokyo, Japan", "2013-12-25" , "1:20:00","A001"},
                {102, "Manilla, Philippines", "2013-11-02" , "13:00:00","A002"},
                {1, "aplace", "adate" , "atime","agate"},
@@ -172,7 +131,7 @@ public class Demo {
                {1, "aplace", "adate" , "atime","agate"},
                {1, "aplace", "adate" , "atime","agate"},
                {1, "aplace", "adate" , "atime","agate"},
-           };
+           };*/
            
            final JTable table = new JTable(data, columnNames);
            table.setPreferredScrollableViewportSize(new Dimension(700, 200));
@@ -272,9 +231,71 @@ public class Demo {
            panel.add(ageField);
        }
        
-       public static void getFlight()
+       public static Object[][] getFlight()
        {
-    
+    	   Connection conn = null;
+    	   Statement stmt = null;
+    	   ResultSet rs = null;
+    	   try{
+    	      //STEP 2: Register JDBC driver
+    	      Class.forName("com.mysql.jdbc.Driver");
+
+    	      //STEP 3: Open a connection
+    	      System.out.println("Connecting to database...");
+    	      conn = DriverManager.getConnection(DB_URL, USER, PASS);
+
+    	      //STEP 4: Execute a query
+    	      System.out.println("Creating database...");
+    	      stmt = conn.createStatement();
+    	      
+    	    String queryDrop = "USE cs157a";
+    	    Statement stmtDrop = conn.createStatement();
+    	    stmtDrop.execute(queryDrop);
+  
+
+
+    	      String sql = "SELECT * FROM FLIGHT";
+    	      rs = stmt.executeQuery(sql);
+    	      
+    	      int i = 0;
+    	      Object[][] data = new Object[10][10];
+    	      while(rs.next())
+    	      {
+
+    	    	  data[i][0] = rs.getInt("flightID");
+    	    	  data[i][1] = rs.getString("destination");
+    	    	  data[i][2] = rs.getDate("depDate");
+    	    	  data[i][3] = rs.getTime("depTime");
+    	    	  data[i][4] = rs.getInt("planeID");
+    	    	  data[i][5] = rs.getInt("pilotID");
+    	    	  data[i][6] = rs.getString("gateID");
+    	    	  
+    	    	  i++;
+    	      }
+    	      
+    	      return data;
+    	      //System.out.println("Database created successfully...");
+    	   }catch(SQLException se){
+    	      //Handle errors for JDBC
+    	      se.printStackTrace();
+    	   }catch(Exception e){
+    	      //Handle errors for Class.forName
+    	      e.printStackTrace();
+    	   }finally{
+    	      //finally block used to close resources
+    	      try{
+    	         if(stmt!=null)
+    	            stmt.close();
+    	      }catch(SQLException se2){
+    	      }// nothing we can do
+    	      try{
+    	         if(conn!=null)
+    	            conn.close();
+    	      }catch(SQLException se){
+    	         se.printStackTrace();
+    	      }//end finally try
+    	   }//end try
+		return null;
        }
 }
 //end JDBCExample
