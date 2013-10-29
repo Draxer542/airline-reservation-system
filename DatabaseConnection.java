@@ -6,6 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.mysql.jdbc.Statement;
+
 /**
  * DatabaseConnection.java
  * 
@@ -18,6 +20,7 @@ public class DatabaseConnection {
 	public ResultSet rs;
 	protected Connection conn;
 	protected PreparedStatement pst;
+	protected  Statement stmt;
 
 	/*
 	 * DatabaseConnection()
@@ -26,7 +29,7 @@ public class DatabaseConnection {
 			String password) {
 		try {
 			Class.forName(driver);
-			System.out.println("Connecting to database...");
+			System.out.println("Connecting to database...");			
 			conn = DriverManager.getConnection(URL, user, password);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -51,6 +54,12 @@ public class DatabaseConnection {
 		}
 	}
 
+	public void execute1(String query) throws SQLException
+	{
+		//stmt.execute("USE cs157a");
+		//stmt.executeQuery(query);
+	}
+	
 	/*
 	 * execute()
 	 */
@@ -58,7 +67,7 @@ public class DatabaseConnection {
 		try	{
 			pst = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE,
 					ResultSet.CONCUR_UPDATABLE);
-			pst.execute();
+			rs = pst.executeQuery();
 		} catch (Exception e) {
 			System.out.println("Error in Command\n" + e);
 			e.printStackTrace();
