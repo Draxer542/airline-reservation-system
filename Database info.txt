@@ -57,6 +57,24 @@ CREATE TABLE Seat(
 
 
 
+//Triggers
+
+//This trigger will update the seat relation to make the taken boolean value true when a seat is filled
+delimiter $$
+
+CREATE TRIGGER updateSeat
+AFTER INSERT ON Passenger
+FOR EACH ROW
+BEGIN 
+UPDATE Seat SET Seat.taken = true
+WHERE Seat.sID = new.seatID;
+
+END$$
 
 
-
+CREATE TRIGGER updateSeatfalse
+BEFORE DELETE ON Passenger
+FOR EACH ROW
+BEGIN
+UPDATE Seat SET taken = false WHERE sID = old.seatID
+END;
