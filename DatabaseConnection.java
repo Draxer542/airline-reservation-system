@@ -1,12 +1,13 @@
-package com.airline.reservation.system;
+
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
-import com.mysql.jdbc.Statement;
+
 
 /**
  * DatabaseConnection.java
@@ -20,7 +21,7 @@ public class DatabaseConnection {
 	public ResultSet rs;
 	protected Connection conn;
 	protected PreparedStatement pst;
-	protected  Statement stmt;
+	protected Statement stmt;
 
 	/*
 	 * DatabaseConnection()
@@ -39,7 +40,7 @@ public class DatabaseConnection {
 	/*
 	 * executeQuery()
 	 */
-	public void executeQuery(String sql, String value1, String value2)	{
+	public ResultSet executeQuery(String sql, String value1, String value2)	{
 		try	{
 			pst = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE,
 					ResultSet.CONCUR_UPDATABLE);
@@ -47,31 +48,42 @@ public class DatabaseConnection {
 			//"app_num" in SQL Query
 			pst.setString(1, value1);
 			pst.setString(2, value2);
-			rs = pst.executeQuery();
+			return pst.executeQuery();
 		} catch (Exception e) {
 			System.out.println("Error in Command \n" + e);
 			e.printStackTrace();
 		}
+		return null;
 	}
 
-	public void execute1(String query) throws SQLException
+	public void executeUpdate(String query) throws SQLException
 	{
-		//stmt.execute("USE cs157a");
-		//stmt.executeQuery(query);
+		try	{
+			
+			pst.executeUpdate(query);
+			
+		} catch (Exception e) {
+			System.out.println("Error in Command\n" + e);
+			e.printStackTrace();
+		}
 	}
 	
 	/*
 	 * execute()
 	 */
-	public void execute(String sql)	{
+	public ResultSet execute(String sql)	{
+		
 		try	{
 			pst = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE,
 					ResultSet.CONCUR_UPDATABLE);
-			rs = pst.executeQuery();
+			return pst.executeQuery();
+			
 		} catch (Exception e) {
 			System.out.println("Error in Command\n" + e);
 			e.printStackTrace();
 		}
+		return null;
+		
 	}
 
 	/*

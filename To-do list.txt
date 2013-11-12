@@ -1,0 +1,9 @@
+Big ToDo
+---------
+1). Add all queries user and admin
+2). Make code more efficient
+
+Little ToDo
+-----------
+1). Keep track of currently used Passenger IDs so that duplicates aren't created
+
