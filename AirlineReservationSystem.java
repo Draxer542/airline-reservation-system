@@ -18,8 +18,9 @@ public class AirlineReservationSystem {
 	// Connection to the mySQL database
 	static DatabaseConnection connect = new DatabaseConnection(
 			"jdbc:mysql://localhost/cs157a", "com.mysql.jdbc.Driver", "root",
-			"1234");
-
+			"3214");
+        static private String seatID ="";
+        
 	// static ArrayList<Integer> ids = new ArrayList<Integer>();
 
 	public static void main(String[] args) throws SQLException {
@@ -127,9 +128,10 @@ public class AirlineReservationSystem {
 	public static void editFlight(boolean b) throws SQLException {
 
 		final JFrame frame = new JFrame();
-
+                final boolean isbook  = b;
 		ResultSet rs;
-		frame.setBounds(300, 100, 800, 300);
+                frame.setTitle("Flight Table");
+		frame.setBounds(300, 100, 800, 400);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 		JPanel panel = new JPanel();
@@ -161,38 +163,46 @@ public class AirlineReservationSystem {
 		}
 
 		final JTable table = new JTable(data, columnNames);
-		table.setPreferredScrollableViewportSize(new Dimension(700, 200));
+		table.setPreferredScrollableViewportSize(new Dimension(750, 200));
 		table.setFillsViewportHeight(true);
 		JScrollPane scrollPane = new JScrollPane(table);
 		panel.add(scrollPane);
+		
+                // mouse click listen to select the flight. it will return flightID
+                table.addMouseListener(new MouseAdapter() {
+                        public void mouseClicked(MouseEvent e) {
+                                int column = table.getColumnModel().getColumnIndexAtX(
+                                                e.getX());
+                                int row = e.getY() / table.getRowHeight();
+                                Object value = "";
+                                if (row < table.getRowCount() && row >= 0
+                                                && column < table.getColumnCount())
+                                        value = table.getValueAt(row, 4);
+                                System.out.println(value);
+                                String planeID = value.toString();
+                                value = table.getValueAt(row, 0);
+                                String flightID = value.toString();
 
-		//if adding a flight
-		if (b)
-			// mouse click listen to select the flight. it will return flightID
-			table.addMouseListener(new MouseAdapter() {
-				public void mouseClicked(MouseEvent e) {
-					int column = table.getColumnModel().getColumnIndexAtX(
-							e.getX());
-					int row = e.getY() / table.getRowHeight();
-					Object value = "";
-					if (row < table.getRowCount() && row >= 0
-							&& column < table.getColumnCount())
-						value = table.getValueAt(row, 4);
-					System.out.println(value);
-					String planeID = value.toString();
-					value = table.getValueAt(row, 0);
-					String flightID = value.toString();
-					try {
+                                try {
 
-						bookSeat(planeID, flightID);
+                                        bookSeat(planeID, flightID, isbook);
 
-					} catch (SQLException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-					frame.dispose();
-				}
-			});
+                                } catch (SQLException e1) {
+                                        // TODO Auto-generated catch block
+                                        e1.printStackTrace();
+                                }
+
+                                frame.dispose();
+                        }
+                });
+                JButton closeButton = new JButton("Close");
+                closeButton.addActionListener(new ActionListener(){
+                        public void actionPerformed(ActionEvent e)
+                        {
+                                frame.dispose();
+                        }
+                });
+                panel.add(closeButton);
 	}// editFlight
 
 	/**			bookSeat
@@ -201,7 +211,7 @@ public class AirlineReservationSystem {
 	 * @param flightID - ID of flight to book seat for
 	 * @throws SQLException
 	 */
-	public static void bookSeat(String planeID, final String flightID)
+	public static void bookSeat(String planeID, final String flightID, boolean isbook)
 			throws SQLException {
 		final JFrame frame = new JFrame();
 		frame.setBounds(300, 100, 500, 500);
@@ -239,15 +249,12 @@ public class AirlineReservationSystem {
 		}
 
 		final JTable table = new JTable(data, columnNames);
-		table.setPreferredScrollableViewportSize(new Dimension(500, 300));
+		table.setPreferredScrollableViewportSize(new Dimension(450, 300));
 		table.setFillsViewportHeight(true);
 		JScrollPane scrollPane = new JScrollPane(table);
 		panel.add(scrollPane);
 
-		panel.add(nameLabel);
-		panel.add(nameField);
-		panel.add(ageLabel);
-		panel.add(ageField);
+		
 
 		table.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
@@ -257,16 +264,43 @@ public class AirlineReservationSystem {
 				if (row < table.getRowCount() && row >= 0
 						&& column < table.getColumnCount())
 					value = (String) table.getValueAt(row, 0);
-
-				String age = ageField.getText();
-				String name = nameField.getText();
-
-				System.out.println(name);
-				addSeatQuery(age, name, value.toString(), flightID);
+                                seatID = value;
 
 			}
 		});
+                if(isbook)
+                {
+                    panel.add(nameLabel);
+                    panel.add(nameField);
+                    panel.add(ageLabel);
+                    panel.add(ageField);
+                    JButton submitButton = new JButton("Submit");
+                   panel.add(submitButton);
+                   submitButton.addActionListener(new ActionListener(){
+                                public void actionPerformed(ActionEvent e)
+                                {
+                                   String age = ageField.getText();
+                                   String name = nameField.getText();
 
+                                   System.out.println(name);
+                                   int pasNum = 0;
+                                   while (pasNum < 99) 
+                                       pasNum = (int) (Math.random()*1000);
+                                   String pasID = pasNum  + "C";
+                                   addSeatQuery(age, name, seatID, flightID, pasID);
+                                   JOptionPane.showMessageDialog(frame, "Thank you for using our system! Your passenger ID is " + pasID + ".");
+                                   frame.dispose();
+                                }
+                   });
+                }
+                JButton closeButton = new JButton("Close");
+                closeButton.addActionListener(new ActionListener(){
+                        public void actionPerformed(ActionEvent e)
+                        {
+                                frame.dispose();
+                        }
+                });
+                panel.add(closeButton);
 	}
 
 	/**			addSeatQuery
@@ -278,7 +312,7 @@ public class AirlineReservationSystem {
 	 * @param flightID - flight of passenger
 	 */
 	public static void addSeatQuery(String age, String name, String seatID,
-			String flightID) {
+			String flightID, String pasID) {
 		boolean firstClass = false;
 
 		if (seatID.charAt(2) == '7' || seatID.charAt(2) == '8')
@@ -296,7 +330,7 @@ public class AirlineReservationSystem {
 				+ ", \'"
 				+ seatID
 				+ "\', \'"
-				+ (int) (Math.random() * 100) + 1 + "C\')";
+				+ pasID + "\')";
 
 		try {
 			connect.executeUpdate(sql);
@@ -354,11 +388,23 @@ public class AirlineReservationSystem {
 
 		panel.add(cancelRevButton);
 
-		JFrame frame = new JFrame();
+                
+		final JFrame frame = new JFrame();
+                frame.setTitle("Airline Reservation System");
 		frame.setBounds(100, 100, 500, 200);
+                
+                JButton closeButton = new JButton("Exit");
+                closeButton.addActionListener(new ActionListener(){
+                        public void actionPerformed(ActionEvent e)
+                        {
+                                frame.dispose();
+                        }
+                });
+                panel.add(closeButton);
 		Container con = frame.getContentPane();
 		con.add(panel);
 
+                
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}// user
@@ -368,7 +414,8 @@ public class AirlineReservationSystem {
 	 */
 	public static void cancelRev() {
 		final JFrame frame = new JFrame();
-		frame.setBounds(300, 100, 400, 200);
+                frame.setTitle("Cancel Reservation");
+		frame.setBounds(300, 100, 300, 200);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 		JPanel panel = new JPanel();
@@ -376,19 +423,26 @@ public class AirlineReservationSystem {
 		final JLabel text = new JLabel("Please enter your passenger ID");
 		panel.add(text);
 
-		final JTextField seat = new JTextField("<<passenger id>>", 10);
-		// final JTextField flight = new JTextField("<<flight ID>>",10);
+		final JTextField seat = new JTextField(10);
 
 		panel.add(seat);
-		// panel.add(flight);
 		JButton submitButton = new JButton("Submit");
 		panel.add(submitButton);
 		submitButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				cancelSeat(seat.getText());
+                                JOptionPane.showMessageDialog(frame, "Your reservation has been cancelled.");
 				frame.dispose();
 			}
 		});
+                JButton closeButton = new JButton("Close");
+                closeButton.addActionListener(new ActionListener(){
+                        public void actionPerformed(ActionEvent e)
+                        {
+                                frame.dispose();
+                        }
+                });
+                panel.add(closeButton);
 	}
 
 	/**			cancelSeat
