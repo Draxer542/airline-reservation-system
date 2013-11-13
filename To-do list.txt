@@ -5,6 +5,6 @@ Big ToDo
 
 Little ToDo
 -----------
-1). Keep track of currently used Passenger IDs so that duplicates aren't created
-2). Inform passenger of what their pasID is after booking a flight
+1). (Luong will take care of this) Keep track of currently used Passenger IDs so that duplicates aren't created
+2). (DONE) Inform passenger of what their pasID is after booking a flight.
 
