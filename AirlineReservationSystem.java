@@ -18,8 +18,9 @@ public class AirlineReservationSystem {
 	// Connection to the mySQL database
 	static DatabaseConnection connect = new DatabaseConnection(
 			"jdbc:mysql://localhost/cs157a", "com.mysql.jdbc.Driver", "root",
-			"3214");
+			"1234");
         static private String seatID ="";
+       
         
 	// static ArrayList<Integer> ids = new ArrayList<Integer>();
 
@@ -57,10 +58,70 @@ public class AirlineReservationSystem {
 
 		/* End TESTS! */
 
-		userMenu();
+		//opens main menu, determines whether user is regular user or admin
+		mainMenu();
+		
+	
 
 	}// main
 
+	public static void mainMenu()
+	{
+		JPanel panel = new JPanel();
+		JLabel label = new JLabel(
+				"                                                                          User or Admin?                                                                         ");
+
+		//button declaration
+		JButton userButton = new JButton("User");
+		JButton adminButton = new JButton("Admin");
+		JButton closeButton = new JButton("Exit");
+		
+		//frame declaration, initialization
+		final JFrame frame = new JFrame();
+        frame.setTitle("Airline Reservation System");
+        frame.setBounds(100, 100, 500, 200);
+		
+        
+        //User clicked
+		userButton.addActionListener(new ActionListener() {
+			//close frame, open user menu
+			public void actionPerformed(ActionEvent e) {
+				frame.dispose();
+				userMenu();
+			}
+		});
+		
+		//admin clicked
+		adminButton.addActionListener(new ActionListener() {
+			//close frame, open admin menu
+			public void actionPerformed(ActionEvent e) {
+				frame.dispose();
+				//adminMenu();
+			}
+		});
+
+		//exit clicked 
+	    closeButton.addActionListener(new ActionListener(){
+	        //close frame
+	    	public void actionPerformed(ActionEvent e){
+	            frame.dispose();
+	        }
+	    });
+		
+	    //add components to panel
+		panel.add(label);
+		panel.add(userButton);
+		panel.add(adminButton);
+		panel.add(closeButton);
+
+		//create container               
+		Container con = frame.getContentPane();
+		con.add(panel);
+
+                
+		frame.setVisible(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
 	/**
 	 * getFlights
 	 * 
