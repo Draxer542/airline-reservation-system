@@ -65,6 +65,12 @@ public class AirlineReservationSystem {
 
 	}// main
 
+	/**			mainMenu
+	 * main menu for the application
+	 * 
+	 * - user selects between user/admin/exit button
+	 * 
+	 */
 	public static void mainMenu()
 	{
 		JPanel panel = new JPanel();
@@ -96,7 +102,7 @@ public class AirlineReservationSystem {
 			//close frame, open admin menu
 			public void actionPerformed(ActionEvent e) {
 				frame.dispose();
-				//adminMenu();
+				adminMenu();
 			}
 		});
 
@@ -113,6 +119,45 @@ public class AirlineReservationSystem {
 		panel.add(userButton);
 		panel.add(adminButton);
 		panel.add(closeButton);
+
+		//create container               
+		Container con = frame.getContentPane();
+		con.add(panel);
+
+                
+		frame.setVisible(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+	
+	/**			adminMenu
+	 * Menu for administrators
+	 * 
+	 */
+	public static void adminMenu(){
+		JPanel panel = new JPanel();
+		JLabel label = new JLabel(
+				"                                                                          What database would you like to access?                                                                         ");
+
+		//button declaration
+		JButton pilotButton = new JButton("Pilot");
+		JButton planeButton = new JButton("Plane");
+		JButton flightButton = new JButton("Flight");
+		JButton passengerButton = new JButton("Passenger");
+		JButton seatButton = new JButton("Seat");
+		
+		//frame declaration, initialization
+		final JFrame frame = new JFrame();
+        frame.setTitle("Airline Reservation System");
+        frame.setBounds(100, 100, 500, 200);
+		
+		
+	    //add components to panel
+		panel.add(label);
+		panel.add(pilotButton);
+		panel.add(planeButton);
+		panel.add(flightButton);
+		panel.add(passengerButton);
+		panel.add(seatButton);
 
 		//create container               
 		Container con = frame.getContentPane();
