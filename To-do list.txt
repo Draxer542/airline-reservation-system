@@ -1,3 +1,7 @@
+** Don't forget to comment your code, it helps us understand it faster **
+
+
+
 Big ToDo
 ---------
 1). Add all queries (user and admin)
@@ -7,4 +11,6 @@ Little ToDo
 -----------
 1). (Luong will take care of this) Keep track of currently used Passenger IDs so that duplicates aren't created
 2). (DONE) Inform passenger of what their pasID is after booking a flight.
+3). Add main menu, user will select whether they are regular or admin user. Then Admin/User menu pops up depending on their choice.
+
 
