@@ -120,7 +120,7 @@ public class AirlineReservationSystem {
 		pilotButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e)
 			{
-				viewPilots();
+				adminPilots();
 				
 			}
 		});
@@ -128,7 +128,7 @@ public class AirlineReservationSystem {
 		planeButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e)
 			{
-				viewPlanes();
+				adminPlanes();
 				
 			}
 		});
@@ -136,7 +136,7 @@ public class AirlineReservationSystem {
 		flightButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e)
 			{
-				viewFlights();
+				adminFlights();
 				
 			}
 		});
@@ -144,7 +144,7 @@ public class AirlineReservationSystem {
 		passengerButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e)
 			{
-				viewPassengers();
+				adminPassengers();
 				
 			}
 		});
@@ -152,7 +152,7 @@ public class AirlineReservationSystem {
 		seatButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e)
 			{
-				viewSeats();
+				adminSeats();
 				
 			}
 		});
@@ -182,10 +182,11 @@ public class AirlineReservationSystem {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
-	/**			viewPilots
-	 * 
+	/**			adminPilots
+	 * This is the admin menu for the pilot relation.
+	 * Admin can add, edit, delete, or view pilots.
 	 */
-	public static void viewPilots(){
+	public static void adminPilots(){
 		
 		JFrame frame = new JFrame();
 		frame.setVisible(true);
@@ -198,17 +199,17 @@ public class AirlineReservationSystem {
 		
 		JLabel nameLabel = new JLabel("Name");
 		
-		JTextField nameField = new JTextField();
+		final JTextField nameField = new JTextField();
 		nameField.setColumns(10);
 		
 		JLabel pilotLabel = new JLabel("Pilot ID");
 		
-		JTextField pilotField = new JTextField();
+		final JTextField pilotField = new JTextField();
 		pilotField.setColumns(10);
 		
 		JLabel expLabel = new JLabel("Years of Experience");
 		
-		JTextField expField = new JTextField();
+		final JTextField expField = new JTextField();
 		expField.setColumns(10);
 		
 		JCheckBox greaterBox = new JCheckBox("Greater than");
@@ -220,6 +221,14 @@ public class AirlineReservationSystem {
 		JButton btnEdit = new JButton("Edit");
 		
 		JButton btnView = new JButton("View");
+		
+		//call viewPilots if view button is clicked
+		btnView.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				
+				viewPilots(nameField.getText(), pilotField.getText() +"", expField.getText() + "");
+			}
+		});
 		
 		JButton btnDelete = new JButton("Delete");
 		
@@ -296,8 +305,87 @@ public class AirlineReservationSystem {
 
 	}
 	
+	/**				viewPilots
+	 * This method creates a window for the user to view pilots.
+	 * Attributes are given by the adminPilots method
+	 * 
+	 * @param name - name of pilot to find
+	 * @param pID - id of pilot to find
+	 * @param exp - exp of pilot to find
+	 */
+	public static void viewPilots(String name, String pID, String exp){
+		
+		ResultSet rs;
+		
+		//default sql statement(if no attributes are specified
+		String sql = "SELECT * FROM Pilot";
+		
+		//if any attribute is specified, append WHERE to sql
+		if(name.compareTo("") + pID.compareTo("") + exp.compareTo("") != 0)
+		{
+			sql = sql + " WHERE ";
+			
+			//append specified attribute to sql
+			if(name.compareTo("") != 0)
+				sql = sql + "pName = \"" + name + "\" ";
+			if(pID.compareTo("") != 0)
+				sql = sql + "pilotID = " + pID + " ";
+			if(exp.compareTo("") != 0)
+				sql = sql + "yrExp = " + exp;
+			
+			
+		}
+		
+		//CHECK, DELETE WHEN DONE
+		System.out.println(sql);
+		rs = connect.execute(sql);
+		
+		//Create frame
+		final JFrame frame = new JFrame();
+		frame.setBounds(300, 100, 500, 500);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setVisible(true);
+		JPanel panel = new JPanel();
+		frame.add(panel);
+		
+		
+		// get number of rows
+		int rowNum = getRowNum(rs);
+
+		//fill Object[][] array with values
+		int i = 0;
+		Object[][] data = new Object[rowNum][3];
+		try {
+			while (rs.next()) {
+
+										
+						data[i][0] = rs.getString("pName");
+						data[i][1] = rs.getInt("pilotID");
+						data[i][2] = rs.getInt("yrExp");
+						
+						i++;
+					}
+			
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//header table
+		String columnNames[] = {"Pilot Name", "Pilot ID", "Years Exp"}; 
+		
+		//fill table
+		final JTable table = new JTable(data, columnNames);
+		table.setPreferredScrollableViewportSize(new Dimension(450, 300));
+		table.setFillsViewportHeight(true);
+		JScrollPane scrollPane = new JScrollPane(table);
+		panel.add(scrollPane);
+		
+	}//viewPilots
 	
-	public static void viewPlanes(){
+	
+	public static void adminPlanes(){
 		
 		JFrame frame = new JFrame();
 		frame.setVisible(true);
@@ -397,7 +485,7 @@ public class AirlineReservationSystem {
 	}
 	
 	
-	public static void viewFlights()
+	public static void adminFlights()
 	{
 		JFrame frame = new JFrame();
 		frame.setVisible(true);
@@ -566,7 +654,7 @@ public class AirlineReservationSystem {
 		frame.getContentPane().setLayout(groupLayout);
 	}
 	
-	public static void viewPassengers()
+	public static void adminPassengers()
 	{
 	
 		JFrame frame = new JFrame();
@@ -697,7 +785,7 @@ public class AirlineReservationSystem {
 		
 	}
 	
-	public static void viewSeats(){
+	public static void adminSeats(){
 		
 		JFrame frame = new JFrame();
 		frame.setVisible(true);
