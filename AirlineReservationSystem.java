@@ -12,6 +12,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
 
 public class AirlineReservationSystem {
 
@@ -26,40 +28,9 @@ public class AirlineReservationSystem {
 
 	public static void main(String[] args) throws SQLException {
 
-		/* TESTS!! */
-		ResultSet rs;
-
-		// test getflights
-		rs = getFlights();
-
-		// result set of query
-		while (rs.next()) {
-			String name = rs.getString("flightID");
-			System.out.println(name);
-		}
-
-		// test getFlightDepTimes
-		rs = getFlightDepTimes();
-
-		// result set of query
-		while (rs.next()) {
-			String name = rs.getString("depTime");
-			System.out.println(name);
-		}
-
-		// test getSeats
-		rs = getSeats("1867");
-
-		// result set of query
-		while (rs.next()) {
-			String name = rs.getString("sID");
-			System.out.println(name);
-		}
-
-		/* End TESTS! */
-
-		//opens main menu, determines whether user is regular user or admin
-		mainMenu();
+	
+	//opens main menu, determines whether user is regular user or admin
+	mainMenu();
 		
 	
 
@@ -145,10 +116,53 @@ public class AirlineReservationSystem {
 		JButton passengerButton = new JButton("Passenger");
 		JButton seatButton = new JButton("Seat");
 		
+		//button actionlisteners
+		pilotButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e)
+			{
+				viewPilots();
+				
+			}
+		});
+		
+		planeButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e)
+			{
+				viewPlanes();
+				
+			}
+		});
+		
+		flightButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e)
+			{
+				viewFlights();
+				
+			}
+		});
+		
+		passengerButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e)
+			{
+				viewPassengers();
+				
+			}
+		});
+		
+		seatButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e)
+			{
+				viewSeats();
+				
+			}
+		});
+		
 		//frame declaration, initialization
 		final JFrame frame = new JFrame();
         frame.setTitle("Airline Reservation System");
         frame.setBounds(100, 100, 500, 200);
+        
+        
 		
 		
 	    //add components to panel
@@ -167,6 +181,650 @@ public class AirlineReservationSystem {
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
+	
+	/**			viewPilots
+	 * 
+	 */
+	public static void viewPilots(){
+		
+		JFrame frame = new JFrame();
+		frame.setVisible(true);
+		frame.setBounds(100, 100, 578, 256);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		JLabel lblNewLabel = new JLabel("Please enter information about the pilot. Leave fields blank if you wish to view all pilots.");
+		
+		JLabel label = new JLabel("");
+		
+		JLabel nameLabel = new JLabel("Name");
+		
+		JTextField nameField = new JTextField();
+		nameField.setColumns(10);
+		
+		JLabel pilotLabel = new JLabel("Pilot ID");
+		
+		JTextField pilotField = new JTextField();
+		pilotField.setColumns(10);
+		
+		JLabel expLabel = new JLabel("Years of Experience");
+		
+		JTextField expField = new JTextField();
+		expField.setColumns(10);
+		
+		JCheckBox greaterBox = new JCheckBox("Greater than");
+		
+		JCheckBox lessBox = new JCheckBox("Less Than");
+		
+		JButton btnAdd = new JButton("Add");
+		
+		JButton btnEdit = new JButton("Edit");
+		
+		JButton btnView = new JButton("View");
+		
+		JButton btnDelete = new JButton("Delete");
+		
+		JButton btnCloseWindow = new JButton("Close Window");
+		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
+		groupLayout.setHorizontalGroup(
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+						.addComponent(label)
+						.addComponent(lblNewLabel)
+						.addGroup(groupLayout.createSequentialGroup()
+							.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
+								.addGroup(groupLayout.createSequentialGroup()
+									.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+										.addComponent(nameLabel)
+										.addComponent(pilotLabel))
+									.addGap(80)
+									.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
+										.addComponent(nameField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+										.addComponent(pilotField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+								.addGroup(groupLayout.createSequentialGroup()
+									.addComponent(expLabel)
+									.addGap(18)
+									.addComponent(expField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+							.addGap(18)
+							.addComponent(greaterBox)
+							.addGap(18)
+							.addComponent(lessBox))
+						.addGroup(groupLayout.createSequentialGroup()
+							.addComponent(btnAdd)
+							.addGap(36)
+							.addComponent(btnEdit)
+							.addGap(39)
+							.addComponent(btnView)
+							.addGap(41)
+							.addComponent(btnDelete)
+							.addGap(49)
+							.addComponent(btnCloseWindow)))
+					.addContainerGap(78, Short.MAX_VALUE))
+		);
+		groupLayout.setVerticalGroup(
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
+					.addGap(26)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(nameLabel)
+						.addComponent(nameField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addGap(18)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(pilotField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(pilotLabel))
+					.addGap(18)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(expLabel)
+						.addComponent(expField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(greaterBox)
+						.addComponent(lessBox))
+					.addGap(18)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(btnAdd)
+						.addComponent(btnEdit)
+						.addComponent(btnView)
+						.addComponent(btnDelete)
+						.addComponent(btnCloseWindow))
+					.addGap(22)
+					.addComponent(label)
+					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+		);
+		frame.getContentPane().setLayout(groupLayout);
+
+	}
+	
+	
+	public static void viewPlanes(){
+		
+		JFrame frame = new JFrame();
+		frame.setVisible(true);
+		frame.setBounds(100, 100, 578, 256);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		JLabel lblNewLabel = new JLabel("Please enter information about the pilot. Leave fields blank if you wish to view all pilots.");
+		
+		JLabel label = new JLabel("");
+		
+		JButton btnAdd = new JButton("Add");
+		
+		JButton btnEdit = new JButton("Edit");
+		
+		JButton btnView = new JButton("View");
+		
+		JButton btnDelete = new JButton("Delete");
+		
+		JButton btnCloseWindow = new JButton("Close Window");
+		
+		JLabel idLabel = new JLabel("Plane ID");
+		
+		JTextField idField = new JTextField();
+		idField.setColumns(10);
+		
+		JLabel ageLabel = new JLabel("Plane Age");
+		
+		JTextField  ageField = new JTextField();
+		ageField.setColumns(10);
+		
+		JCheckBox olderBox = new JCheckBox("Older Than");
+		
+		JCheckBox youngerBox = new JCheckBox("Younger Than");
+		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
+		groupLayout.setHorizontalGroup(
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+						.addComponent(label)
+						.addComponent(lblNewLabel)
+						.addGroup(groupLayout.createSequentialGroup()
+							.addComponent(idLabel)
+							.addGap(18)
+							.addComponent(idField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addGroup(groupLayout.createSequentialGroup()
+							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+								.addGroup(groupLayout.createSequentialGroup()
+									.addComponent(ageLabel)
+									.addPreferredGap(ComponentPlacement.UNRELATED)
+									.addComponent(ageField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+								.addGroup(groupLayout.createSequentialGroup()
+									.addComponent(btnAdd)
+									.addGap(34)
+									.addComponent(btnEdit)))
+							.addGap(33)
+							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+								.addComponent(olderBox)
+								.addComponent(btnView))
+							.addGap(18)
+							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+								.addGroup(groupLayout.createSequentialGroup()
+									.addComponent(btnDelete)
+									.addGap(46)
+									.addComponent(btnCloseWindow))
+								.addComponent(youngerBox))))
+					.addContainerGap(68, Short.MAX_VALUE))
+		);
+		groupLayout.setVerticalGroup(
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
+					.addGap(18)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(idLabel)
+						.addComponent(idField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addGap(18)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(ageLabel)
+						.addComponent(ageField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(olderBox)
+						.addComponent(youngerBox))
+					.addGap(50)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(btnAdd)
+						.addComponent(btnEdit)
+						.addComponent(btnView)
+						.addComponent(btnDelete)
+						.addComponent(btnCloseWindow))
+					.addGap(51)
+					.addComponent(label)
+					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+		);
+		frame.getContentPane().setLayout(groupLayout);
+		
+	}
+	
+	
+	public static void viewFlights()
+	{
+		JFrame frame = new JFrame();
+		frame.setVisible(true);
+		frame.setBounds(100, 100, 578, 271);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		JLabel lblNewLabel = new JLabel("Please enter information about the pilot. Leave fields blank if you wish to view all pilots.");
+		
+		JLabel label = new JLabel("");
+		
+		JButton btnAdd = new JButton("Add");
+		
+		JButton btnEdit = new JButton("Edit");
+		
+		JButton btnView = new JButton("View");
+		
+		JButton btnDelete = new JButton("Delete");
+		
+		JButton btnCloseWindow = new JButton("Close Window");
+		
+		JLabel flightLabel = new JLabel("Flight ID");
+		
+		JTextField flightField = new JTextField();
+		flightField.setColumns(10);
+		
+		JLabel destLabel = new JLabel("Destination");
+		
+		JTextField destField = new JTextField();
+		destField.setColumns(10);
+		
+		JLabel depDateLabel = new JLabel("Departure Date");
+		
+		JTextField depDateField = new JTextField();
+		depDateField.setColumns(10);
+		
+		JLabel depTimeLabel = new JLabel("Departure Time");
+		
+		JTextField depTimeField = new JTextField();
+		depTimeField.setColumns(10);
+		
+		JLabel planeLabel = new JLabel("Plane ID");
+		
+		JTextField planeField = new JTextField();
+		planeField.setColumns(10);
+		
+		JLabel gateLabel = new JLabel("Gate ID");
+		
+		JTextField gateField = new JTextField();
+		gateField.setColumns(10);
+		
+		JLabel pilotLabel = new JLabel("PilotID");
+		
+		JTextField pilotField = new JTextField();
+		pilotField.setColumns(10);
+		
+		JCheckBox befDateBox = new JCheckBox("Before");
+		
+		JCheckBox afDateBox = new JCheckBox("After");
+		
+		JCheckBox befTimeBox = new JCheckBox("Before");
+		
+		JCheckBox afTimeBox = new JCheckBox("After");
+		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
+		groupLayout.setHorizontalGroup(
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+						.addComponent(label)
+						.addComponent(lblNewLabel)
+						.addGroup(groupLayout.createSequentialGroup()
+							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+								.addGroup(groupLayout.createSequentialGroup()
+									.addComponent(btnAdd)
+									.addGap(34)
+									.addComponent(btnEdit))
+								.addGroup(groupLayout.createSequentialGroup()
+									.addComponent(flightLabel)
+									.addPreferredGap(ComponentPlacement.UNRELATED)
+									.addComponent(flightField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+								.addGroup(groupLayout.createSequentialGroup()
+									.addGap(33)
+									.addComponent(btnView)
+									.addGap(42)
+									.addComponent(btnDelete)
+									.addGap(46)
+									.addComponent(btnCloseWindow))
+								.addGroup(groupLayout.createSequentialGroup()
+									.addGap(10)
+									.addComponent(planeLabel)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(planeField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+									.addGap(10)
+									.addComponent(gateLabel)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(gateField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(ComponentPlacement.UNRELATED)
+									.addComponent(pilotLabel)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(pilotField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))))
+						.addGroup(groupLayout.createSequentialGroup()
+							.addComponent(depDateLabel)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(depDateField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.UNRELATED)
+							.addComponent(befDateBox)
+							.addPreferredGap(ComponentPlacement.UNRELATED)
+							.addComponent(afDateBox))
+						.addGroup(groupLayout.createSequentialGroup()
+							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+								.addComponent(depTimeLabel)
+								.addComponent(destLabel))
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+								.addComponent(destField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+								.addComponent(depTimeField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+							.addPreferredGap(ComponentPlacement.UNRELATED)
+							.addComponent(befTimeBox)
+							.addGap(4)
+							.addComponent(afTimeBox)))
+					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+		);
+		groupLayout.setVerticalGroup(
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
+					.addGap(18)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(flightLabel)
+						.addComponent(flightField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(planeLabel)
+						.addComponent(planeField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(gateField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(gateLabel)
+						.addComponent(pilotLabel)
+						.addComponent(pilotField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(depDateLabel)
+						.addComponent(depDateField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(befDateBox)
+						.addComponent(afDateBox))
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(depTimeLabel)
+						.addComponent(depTimeField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(afTimeBox)
+						.addComponent(befTimeBox))
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(destLabel)
+						.addComponent(destField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addGap(21)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(btnAdd)
+						.addComponent(btnEdit)
+						.addComponent(btnView)
+						.addComponent(btnDelete)
+						.addComponent(btnCloseWindow))
+					.addGap(51)
+					.addComponent(label)
+					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+		);
+		frame.getContentPane().setLayout(groupLayout);
+	}
+	
+	public static void viewPassengers()
+	{
+	
+		JFrame frame = new JFrame();
+		frame.setVisible(true);
+		frame.setBounds(100, 100, 578, 271);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		JLabel lblNewLabel = new JLabel("Please enter information about the pilot. Leave fields blank if you wish to view all pilots.");
+		
+		JLabel label = new JLabel("");
+		
+		JButton btnAdd = new JButton("Add");
+		
+		JButton btnEdit = new JButton("Edit");
+		
+		JButton btnView = new JButton("View");
+		
+		JButton btnDelete = new JButton("Delete");
+		
+		JButton btnCloseWindow = new JButton("Close Window");
+		
+		JLabel nameLabel = new JLabel("Name");
+		
+		JTextField nameField = new JTextField();
+		nameField.setColumns(10);
+		
+		JLabel ageLabel = new JLabel("Age");
+		
+		JTextField ageField = new JTextField();
+		ageField.setColumns(10);
+		
+		JLabel flightLabel = new JLabel("Flight ID");
+		
+		JTextField flightField = new JTextField();
+		flightField.setColumns(10);
+		
+		JLabel seatLabel = new JLabel("Seat ID");
+		
+		JTextField seatField = new JTextField();
+		seatField.setColumns(10);
+		
+		JCheckBox firstClassBox = new JCheckBox("First Class");
+		
+		JLabel passLabel = new JLabel("Passenger ID");
+		
+		JTextField pasField = new JTextField();
+		pasField.setColumns(10);
+		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
+		groupLayout.setHorizontalGroup(
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+						.addComponent(label)
+						.addComponent(lblNewLabel)
+						.addGroup(groupLayout.createSequentialGroup()
+							.addComponent(flightLabel)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(flightField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addGroup(groupLayout.createSequentialGroup()
+							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+								.addGroup(groupLayout.createSequentialGroup()
+									.addComponent(btnAdd)
+									.addGap(34)
+									.addComponent(btnEdit))
+								.addGroup(groupLayout.createSequentialGroup()
+									.addComponent(nameLabel)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(nameField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+								.addGroup(groupLayout.createSequentialGroup()
+									.addComponent(ageLabel)
+									.addPreferredGap(ComponentPlacement.UNRELATED)
+									.addComponent(ageField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+							.addGap(33)
+							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+								.addGroup(groupLayout.createSequentialGroup()
+									.addComponent(passLabel)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(pasField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+								.addGroup(groupLayout.createSequentialGroup()
+									.addComponent(seatLabel)
+									.addPreferredGap(ComponentPlacement.UNRELATED)
+									.addComponent(seatField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+									.addGap(18)
+									.addComponent(firstClassBox))
+								.addGroup(groupLayout.createSequentialGroup()
+									.addComponent(btnView)
+									.addGap(42)
+									.addComponent(btnDelete)
+									.addGap(46)
+									.addComponent(btnCloseWindow)))))
+					.addContainerGap(78, Short.MAX_VALUE))
+		);
+		groupLayout.setVerticalGroup(
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
+					.addGap(18)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(nameLabel)
+						.addComponent(nameField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(seatLabel)
+						.addComponent(seatField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(firstClassBox))
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(ageLabel)
+						.addComponent(ageField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(passLabel)
+						.addComponent(pasField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(flightLabel)
+						.addComponent(flightField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addGap(55)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(btnAdd)
+						.addComponent(btnEdit)
+						.addComponent(btnView)
+						.addComponent(btnDelete)
+						.addComponent(btnCloseWindow))
+					.addGap(51)
+					.addComponent(label)
+					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+		);
+		frame.getContentPane().setLayout(groupLayout);
+		
+	}
+	
+	public static void viewSeats(){
+		
+		JFrame frame = new JFrame();
+		frame.setVisible(true);
+		frame.setBounds(100, 100, 578, 256);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		JLabel lblNewLabel = new JLabel("Please enter information about the seat. Leave fields blank if you wish to view all seatss.");
+		
+		JLabel label = new JLabel("");
+		
+		JLabel lblSeatId = new JLabel("Seat ID");
+		
+		JTextField seatField = new JTextField();
+		
+		
+		
+		seatField.setColumns(10);
+		
+		JLabel rowLabel = new JLabel("Row");
+		
+		JTextField rowField = new JTextField();
+		rowField.setColumns(10);
+		
+		JLabel seatNoLabel = new JLabel("Seat Number");
+		
+		JTextField seatNoField = new JTextField();
+		seatNoField.setColumns(10);
+		
+		JLabel planeIDLabel = new JLabel("Plane ID");
+		
+		JTextField planeIDField = new JTextField();
+		planeIDField.setColumns(10);
+		
+		JCheckBox takenBox = new JCheckBox("Taken");
+		
+		JButton btnAdd = new JButton("Add");
+		
+		JButton btnEdit = new JButton("Edit");
+		
+		JButton btnView = new JButton("View");
+		
+		JButton btnDelete = new JButton("Delete");
+		
+		JButton btnCloseWindow = new JButton("Close Window");
+		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
+		groupLayout.setHorizontalGroup(
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+						.addComponent(lblSeatId)
+						.addComponent(rowLabel))
+					.addContainerGap(516, Short.MAX_VALUE))
+				.addGroup(groupLayout.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+						.addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
+							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+								.addComponent(label)
+								.addComponent(lblNewLabel))
+							.addGap(66))
+						.addGroup(groupLayout.createSequentialGroup()
+							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+								.addComponent(seatNoLabel)
+								.addComponent(planeIDLabel))
+							.addGap(18)
+							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+								.addComponent(seatField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+								.addComponent(planeIDField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+								.addGroup(groupLayout.createSequentialGroup()
+									.addComponent(seatNoField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+									.addGap(18)
+									.addComponent(takenBox))
+								.addComponent(rowField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+							.addPreferredGap(ComponentPlacement.RELATED, 150, Short.MAX_VALUE)
+							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+								.addComponent(btnAdd)
+								.addComponent(btnEdit)
+								.addComponent(btnView)
+								.addComponent(btnDelete)
+								.addComponent(btnCloseWindow))
+							.addContainerGap(58, Short.MAX_VALUE))))
+		);
+		groupLayout.setVerticalGroup(
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
+					.addGap(26)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblSeatId)
+						.addComponent(seatField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(btnAdd))
+					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+						.addGroup(groupLayout.createSequentialGroup()
+							.addPreferredGap(ComponentPlacement.UNRELATED)
+							.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+								.addComponent(rowLabel)
+								.addComponent(rowField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+							.addGap(18)
+							.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+								.addComponent(seatNoLabel)
+								.addComponent(seatNoField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+								.addComponent(takenBox))
+							.addPreferredGap(ComponentPlacement.UNRELATED)
+							.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+								.addComponent(planeIDLabel)
+								.addComponent(planeIDField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+							.addGap(19)
+							.addComponent(label))
+						.addGroup(groupLayout.createSequentialGroup()
+							.addGap(6)
+							.addComponent(btnEdit)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(btnView)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(btnDelete)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(btnCloseWindow)))
+					.addContainerGap(11, Short.MAX_VALUE))
+		);
+		frame.getContentPane().setLayout(groupLayout);
+	}
+	
+	
+	
+	
 	/**
 	 * getFlights
 	 * 
