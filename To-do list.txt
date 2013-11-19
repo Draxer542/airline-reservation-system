@@ -16,7 +16,7 @@ Big ToDo
 
 Little ToDo
 -----------
-1). (Luong will take care of this) Keep track of currently used Passenger IDs so that duplicates aren't created
+
 
 
 
@@ -24,6 +24,8 @@ Little ToDo
 Completed
 ----------
 1). (DONE - Luong) Inform passenger of what their pasID is after booking a flight.
-2). (DONE - Arjay)Add main menu, user will select whether they are regular or admin user. Then Admin/User menu pops up depending on their choice.
+2). (DONE - Arjay) Add main menu, user will select whether they are regular or admin user. Then Admin/User menu pops up depending on their choice.
 3). (DONE - Arjay) Add gui for admin menu
 4). (DONE - Arjay) Add gui for all admin menu choices
+5). (DONE - Luong) Add a function to check if pasID is in Passenger for book and cancel a flight so that pasID is unique
+6). (DONE - Luong) User won't be able to book a flight without giving both name and age
