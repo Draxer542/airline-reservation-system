@@ -10,6 +10,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -20,7 +22,7 @@ public class AirlineReservationSystem {
 	// Connection to the mySQL database
 	static DatabaseConnection connect = new DatabaseConnection(
 			"jdbc:mysql://localhost/cs157a", "com.mysql.jdbc.Driver", "root",
-			"1234");
+			"3214");
         static private String seatID ="";
        
         
@@ -1128,20 +1130,37 @@ public class AirlineReservationSystem {
                     panel.add(ageField);
                     JButton submitButton = new JButton("Submit");
                    panel.add(submitButton);
-                   submitButton.addActionListener(new ActionListener(){
+                   submitButton.addActionListener(new ActionListener() {
                                 public void actionPerformed(ActionEvent e)
                                 {
-                                   String age = ageField.getText();
-                                   String name = nameField.getText();
+                                       try {
+                                           String age = ageField.getText();
+                                           String name = nameField.getText();
 
-                                   System.out.println(name);
-                                   int pasNum = 0;
-                                   while (pasNum < 99) 
-                                       pasNum = (int) (Math.random()*1000);
-                                   String pasID = pasNum  + "C";
-                                   addSeatQuery(age, name, seatID, flightID, pasID);
-                                   JOptionPane.showMessageDialog(frame, "Thank you for using our system! Your passenger ID is " + pasID + ".");
-                                   frame.dispose();
+                                           System.out.println(name);
+                                           int pasNum = 0;
+                                           String pasID = "";
+                                           while(pasID.equals("") || isInDB(pasID))
+                                           {
+                                                while (pasNum < 99) 
+                                                    pasNum = (int) (Math.random()*1000);
+                                                pasID = pasNum  + "C";
+                                           }
+                                           if(!age.equals("") && !name.contains(""))
+                                           {
+                                                addSeatQuery(age, name, seatID, flightID, pasID);
+                                                JOptionPane.showMessageDialog(frame, "Thank you for using our system! Your passenger ID is " + pasID + ".");
+                                                frame.dispose();
+                                           }
+                                           else
+                                           {
+                                                JOptionPane.showMessageDialog(frame, "Please enter your information!");
+                                           }
+                                           
+                                       } 
+                                       catch (SQLException ex) {
+                                           Logger.getLogger(AirlineReservationSystem.class.getName()).log(Level.SEVERE, null, ex);
+                                       }
                                 }
                    });
                 }
@@ -1155,6 +1174,24 @@ public class AirlineReservationSystem {
                 panel.add(closeButton);
 	}
 
+        /*
+         * checks if pasID is in Passenger table for insert and deletion
+         */
+        public static boolean isInDB(String pasID) throws SQLException
+        {
+                ResultSet rs;
+		
+                //default sql statement(if no attributes are specified
+                String sql = "SELECT pasID FROM Passenger";
+                rs = connect.execute(sql);
+                while(rs.next())
+                {
+                    if(pasID.equalsIgnoreCase(rs.getString("pasID")))
+                        return true;
+                }
+                return false;
+        }
+        
 	/**			addSeatQuery
 	 * 
 	 * Performs insertion of passenger to database
@@ -1275,16 +1312,28 @@ public class AirlineReservationSystem {
 		final JLabel text = new JLabel("Please enter your passenger ID");
 		panel.add(text);
 
-		final JTextField seat = new JTextField(10);
+		final JTextField pasID = new JTextField(10);
 
-		panel.add(seat);
+		panel.add(pasID);
 		JButton submitButton = new JButton("Submit");
 		panel.add(submitButton);
 		submitButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				cancelSeat(seat.getText());
-                                JOptionPane.showMessageDialog(frame, "Your reservation has been cancelled.");
-				frame.dispose();
+                            try {
+                                if(!pasID.getText().equals("") && isInDB(pasID.getText()))
+                                {
+                                    cancelSeat(pasID.getText());
+                                    JOptionPane.showMessageDialog(frame, "Your reservation has been cancelled.");
+                                    frame.dispose();
+                                }
+                                else if(pasID.getText().equals(""))
+                                    JOptionPane.showMessageDialog(frame, "Please enter your passenger ID!");
+                                else
+                                    JOptionPane.showMessageDialog(frame, "Your passenger ID is not in the system. Please make sure you enter the correct ID!");
+                            } 
+                            catch (SQLException ex) {
+                                Logger.getLogger(AirlineReservationSystem.class.getName()).log(Level.SEVERE, null, ex);
+                            }
 			}
 		});
                 JButton closeButton = new JButton("Close");
