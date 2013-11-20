@@ -252,11 +252,11 @@ public void admin(){
 			else if (pID.compareTo("") != 0)
 				sql = sql + "planeID = " + pID + " ";
 			else if (age.compareTo("") != 0 && compareExp == 0)
-				sql = sql + "yrExp = " + age;
+				sql = sql + "age = " + age;
 			else if (age.compareTo("") != 0 && compareExp > 0)
-				sql = sql + "yrExp > " + age;
+				sql = sql + "age > " + age;
 			else if (age.compareTo("") != 0 && compareExp < 0)
-				sql = sql + "yrExp < " + age;
+				sql = sql + "age < " + age;
 
 		}
 
