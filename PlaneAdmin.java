@@ -30,9 +30,9 @@ public class PlaneAdmin extends Admin{
 	
 public void admin(){
 		
-		final JFrame frame = new JFrame();
+		final JFrame frame = new JFrame("Admin - Plane");
 		frame.setVisible(true);
-		frame.setBounds(100, 100, 578, 256);
+		frame.setBounds(200, 200, 578, 256);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		JLabel lblNewLabel = new JLabel("Please enter information about the pilot. Leave fields blank if you wish to view all pilots.");
@@ -41,9 +41,8 @@ public void admin(){
 		
 		JButton btnAdd = new JButton("Add");
 		
-		JButton btnEdit = new JButton("Edit");
 		
-		JButton btnView = new JButton("View");
+		JButton btnView = new JButton("View and Edit");
 		
 		
 		
@@ -112,6 +111,12 @@ public void admin(){
                         }
 		});
 		
+                btnCloseWindow.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				frame.dispose();
+
+			}
+		});
 		
 		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
 		groupLayout.setHorizontalGroup(
@@ -134,17 +139,16 @@ public void admin(){
 								.addGroup(groupLayout.createSequentialGroup()
 									.addComponent(btnAdd)
 									.addGap(34)
-									.addComponent(btnEdit)))
+									.addComponent(btnView)))
 							.addGap(33)
 							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 								.addComponent(olderBox)
-								.addComponent(btnView))
+								.addComponent(btnDelete))
 							.addGap(18)
 							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 								.addGroup(groupLayout.createSequentialGroup()
-									.addComponent(btnDelete)
-									.addGap(46)
-									.addComponent(btnCloseWindow))
+									.addComponent(btnCloseWindow)
+									.addGap(46))
 								.addComponent(youngerBox))))
 					.addContainerGap(68, Short.MAX_VALUE))
 		);
@@ -166,7 +170,6 @@ public void admin(){
 					.addGap(50)
 					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
 						.addComponent(btnAdd)
-						.addComponent(btnEdit)
 						.addComponent(btnView)
 						.addComponent(btnDelete)
 						.addComponent(btnCloseWindow))
@@ -309,14 +312,16 @@ public void admin(){
 			public void tableChanged(TableModelEvent e) {
 				int row = e.getFirstRow();
 				int column = e.getColumn();
-				TableModel model = (TableModel) e.getSource();
-				String columnName = model.getColumnName(column);
-				Object data = model.getValueAt(row, column);
-				String planeID = (String) table.getValueAt(row, 0);
-				if (column != 1)
-					;
-				editPlane(columnName, data, planeID);
-
+                                if(column == 0)
+                                        JOptionPane.showMessageDialog(frame, "Cannot change planeID");
+                                else
+                                {    
+                                        TableModel model = (TableModel) e.getSource();
+                                        String columnName = model.getColumnName(column);
+                                        Object data = model.getValueAt(row, column);
+                                        String planeID = (String) table.getValueAt(row, 0);
+                                        editPlane(columnName, data, planeID);
+                                }
 			}
 		});
 		JButton closeButton = new JButton("Close");
