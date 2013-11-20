@@ -16,6 +16,8 @@ import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.event.*;
+import javax.swing.table.*;
 
 public class AirlineReservationSystem {
 
@@ -23,8 +25,8 @@ public class AirlineReservationSystem {
 	static DatabaseConnection connect = new DatabaseConnection(
 			"jdbc:mysql://localhost/cs157a", "com.mysql.jdbc.Driver", "root",
 			"3214");
-        static private String seatID ="";
-       
+        static private String seatID = "";
+        static private int compareExp = 0;
         
 	// static ArrayList<Integer> ids = new ArrayList<Integer>();
 
@@ -190,21 +192,21 @@ public class AirlineReservationSystem {
 	 */
 	public static void adminPilots(){
 		
-		JFrame frame = new JFrame();
+		final JFrame frame = new JFrame();
 		frame.setVisible(true);
-		frame.setBounds(100, 100, 578, 256);
+		frame.setBounds(200, 200, 578, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		JLabel lblNewLabel = new JLabel("Please enter information about the pilot. Leave fields blank if you wish to view all pilots.");
+		JLabel lblNewLabel = new JLabel("Enter information to filter and view pilots. To view all pilots, leave all the fields blank.");
 		
-		JLabel label = new JLabel("");
+		JLabel label = new JLabel("To add a pilot, enter name and years of experience. To delete a pilot, enter pilot name or pilotID.");
 		
 		JLabel nameLabel = new JLabel("Name");
 		
 		final JTextField nameField = new JTextField();
 		nameField.setColumns(10);
 		
-		JLabel pilotLabel = new JLabel("Pilot ID");
+		final JLabel pilotLabel = new JLabel("Pilot ID");
 		
 		final JTextField pilotField = new JTextField();
 		pilotField.setColumns(10);
@@ -213,28 +215,63 @@ public class AirlineReservationSystem {
 		
 		final JTextField expField = new JTextField();
 		expField.setColumns(10);
+		final JCheckBox greaterBox = new JCheckBox("Greater than");
 		
-		JCheckBox greaterBox = new JCheckBox("Greater than");
-		
-		JCheckBox lessBox = new JCheckBox("Less Than");
+		final JCheckBox lessBox = new JCheckBox("Less Than");
 		
 		JButton btnAdd = new JButton("Add");
-		
-		JButton btnEdit = new JButton("Edit");
-		
-		JButton btnView = new JButton("View");
+		//call addPilot if view button is clicked and fields are not empty
+		btnAdd.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				if(addPilot(nameField.getText(), expField.getText() + ""))
+                                    JOptionPane.showMessageDialog(frame, "Pilot " + nameField.getText() + " has been added to database.");
+                                else
+                                    JOptionPane.showMessageDialog(frame, "Please enter pilot name and years of experience!");
+
+			}
+		});
+		JButton btnView = new JButton("View and Edit");
 		
 		//call viewPilots if view button is clicked
 		btnView.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				
-				viewPilots(nameField.getText(), pilotField.getText() +"", expField.getText() + "");
-			}
+			public void actionPerformed(ActionEvent ae){
+                                if(!expField.getText().equals("") && greaterBox.isSelected() && lessBox.isSelected())
+                                        JOptionPane.showMessageDialog(frame, "Please only pick either greater or less than!");
+                                else
+                                {
+                                        if(greaterBox.isSelected())
+                                            compareExp = 1;
+                                        else if(lessBox.isSelected())
+                                            compareExp = -1;
+                                        else
+                                            compareExp = 0;
+                                        viewPilots(nameField.getText(), pilotField.getText() +"", expField.getText() + "", compareExp);
+                                }
+                        }
 		});
 		
 		JButton btnDelete = new JButton("Delete");
-		
+		btnDelete.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent ae){
+                        try {
+                                if(deletePilot(nameField.getText(), pilotField.getText() + ""))
+                                        JOptionPane.showMessageDialog(frame, "Pilot " + nameField.getText() + " " + pilotField.getText() + " has been deleted database.");
+                                else
+                                        JOptionPane.showMessageDialog(frame, "Please enter pilot name or pilot ID that exists in the database!");
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+
+			}
+		});
+                
 		JButton btnCloseWindow = new JButton("Close Window");
+                btnCloseWindow.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				
+				frame.dispose();
+			}
+		});
 		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
@@ -264,7 +301,6 @@ public class AirlineReservationSystem {
 						.addGroup(groupLayout.createSequentialGroup()
 							.addComponent(btnAdd)
 							.addGap(36)
-							.addComponent(btnEdit)
 							.addGap(39)
 							.addComponent(btnView)
 							.addGap(41)
@@ -278,6 +314,7 @@ public class AirlineReservationSystem {
 				.addGroup(groupLayout.createSequentialGroup()
 					.addContainerGap()
 					.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(label, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
 					.addGap(26)
 					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
 						.addComponent(nameLabel)
@@ -295,7 +332,6 @@ public class AirlineReservationSystem {
 					.addGap(18)
 					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
 						.addComponent(btnAdd)
-						.addComponent(btnEdit)
 						.addComponent(btnView)
 						.addComponent(btnDelete)
 						.addComponent(btnCloseWindow))
@@ -307,6 +343,39 @@ public class AirlineReservationSystem {
 
 	}
 	
+        public static boolean addPilot(String name, String exp)
+        {
+                ResultSet rs;
+		int maxID = 0;
+		//default sql statement(if no attributes are specified
+		String sql = "SELECT max(pilotID) as max FROM Pilot";
+                rs = connect.execute(sql);
+                
+                try {
+                    while(rs.next())
+                    {
+                        maxID = rs.getInt("max");
+                        System.out.println(maxID);
+                    }
+                }
+                catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+                }
+                int newID = maxID + 1;
+                if(name.equals("") || exp.equals(""))
+                    return false;
+                sql = "INSERT INTO Pilot VALUES(\"" + name +"\", " + newID + ", " + exp + ")";
+                try {
+			connect.executeUpdate(sql);
+                        return true;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+                return false;
+        }//addPilot
+        
 	/**				viewPilots
 	 * This method creates a window for the user to view pilots.
 	 * Attributes are given by the adminPilots method
@@ -315,7 +384,7 @@ public class AirlineReservationSystem {
 	 * @param pID - id of pilot to find
 	 * @param exp - exp of pilot to find
 	 */
-	public static void viewPilots(String name, String pID, String exp){
+	public static void viewPilots(String name, String pID, String exp, int compareExp){
 		
 		ResultSet rs;
 		
@@ -330,11 +399,14 @@ public class AirlineReservationSystem {
 			//append specified attribute to sql
 			if(name.compareTo("") != 0)
 				sql = sql + "pName = \"" + name + "\" ";
-			if(pID.compareTo("") != 0)
+                        else if(pID.compareTo("") != 0)
 				sql = sql + "pilotID = " + pID + " ";
-			if(exp.compareTo("") != 0)
+                        else if(exp.compareTo("") != 0 && compareExp == 0)
 				sql = sql + "yrExp = " + exp;
-			
+                        else if(exp.compareTo("") != 0 && compareExp > 0)
+				sql = sql + "yrExp > " + exp;
+                        else if(exp.compareTo("") != 0 && compareExp < 0)
+				sql = sql + "yrExp < " + exp;
 			
 		}
 		
@@ -344,7 +416,7 @@ public class AirlineReservationSystem {
 		
 		//Create frame
 		final JFrame frame = new JFrame();
-		frame.setBounds(300, 100, 500, 500);
+		frame.setBounds(400, 100, 500, 500);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 		JPanel panel = new JPanel();
@@ -375,18 +447,91 @@ public class AirlineReservationSystem {
 		}
 		
 		//header table
-		String columnNames[] = {"Pilot Name", "Pilot ID", "Years Exp"}; 
+		String columnNames[] = {"pName", "Pilot ID", "yrExp"}; 
 		
 		//fill table
 		final JTable table = new JTable(data, columnNames);
 		table.setPreferredScrollableViewportSize(new Dimension(450, 300));
 		table.setFillsViewportHeight(true);
 		JScrollPane scrollPane = new JScrollPane(table);
+                JLabel text = new JLabel("Edit database except for PilotID");
+                panel.add(text);
 		panel.add(scrollPane);
+                
+                //tablemodellisten for editing database
+                table.getModel().addTableModelListener(new TableModelListener(){
+			public void tableChanged(TableModelEvent e)
+			{
+                                int row = e.getFirstRow();
+                                int column = e.getColumn();
+                                TableModel model = (TableModel)e.getSource();
+                                String columnName = model.getColumnName(column);
+                                Object data = model.getValueAt(row, column);
+                                int pilotID = (int) table.getValueAt(row, 1);
+				if(column != 1)
+                                    editPilot(columnName, data, pilotID);
+				
+			}
+		});
+                JButton closeButton = new JButton("Close");
+                closeButton.addActionListener(new ActionListener(){
+                        public void actionPerformed(ActionEvent e)
+                        {
+                                frame.dispose();
+                        }
+                });
+                panel.add(closeButton);
 		
 	}//viewPilots
 	
+        /*
+         * Admin edit Pilot database except for pilotID
+         */
+        public static void editPilot(String columnName, Object data, int pilotID){
+                String sql = "UPDATE Pilot SET " + columnName + " = \"" + data + "\" WHERE pilotID = " + pilotID;
+                try {
+			connect.executeUpdate(sql);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        }
 	
+        public static boolean deletePilot(String name, String id) throws SQLException
+        {
+                if(name.equals("") && id.equals(""))
+                        return false;
+                ResultSet rs;
+		
+                //default sql statement(if no attributes are specified
+                String sql = "SELECT * FROM Pilot WHERE pName = \'" + name + "\'";
+                rs = connect.execute(sql);
+                if(!rs.next())
+                {
+                        sql = "SELECT * FROM Pilot WHERE pilotID = \'" + id + "\'";
+                        rs = connect.execute(sql);
+                        if(!rs.next())
+                                return false;
+                }
+		
+		
+                if(name.compareTo("") != 0)
+                        sql = "DELETE FROM pilot WHERE pName = \'" + name + "\'";
+                else if(id.compareTo("") != 0)
+                        sql = "DELETE FROM pilot WHERE pilotID = \'" + id + "\'";
+			
+		
+                
+                try {
+                        System.out.println(sql);
+			connect.executeUpdate(sql);
+                        return true;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+                        return false;
+		}
+        }
 	public static void adminPlanes(){
 		
 		JFrame frame = new JFrame();
@@ -1131,7 +1276,7 @@ public class AirlineReservationSystem {
                     JButton submitButton = new JButton("Submit");
                    panel.add(submitButton);
                    submitButton.addActionListener(new ActionListener() {
-                                public void actionPerformed(ActionEvent e)
+                                public void actionPerformed(ActionEvent ae)
                                 {
                                        try {
                                            String age = ageField.getText();
@@ -1158,8 +1303,9 @@ public class AirlineReservationSystem {
                                            }
                                            
                                        } 
-                                       catch (SQLException ex) {
-                                           Logger.getLogger(AirlineReservationSystem.class.getName()).log(Level.SEVERE, null, ex);
+                                       catch (SQLException e) {
+                                            // TODO Auto-generated catch block
+                                            e.printStackTrace();
                                        }
                                 }
                    });
@@ -1318,7 +1464,7 @@ public class AirlineReservationSystem {
 		JButton submitButton = new JButton("Submit");
 		panel.add(submitButton);
 		submitButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(ActionEvent ae) {
                             try {
                                 if(!pasID.getText().equals("") && isInDB(pasID.getText()))
                                 {
@@ -1331,8 +1477,9 @@ public class AirlineReservationSystem {
                                 else
                                     JOptionPane.showMessageDialog(frame, "Your passenger ID is not in the system. Please make sure you enter the correct ID!");
                             } 
-                            catch (SQLException ex) {
-                                Logger.getLogger(AirlineReservationSystem.class.getName()).log(Level.SEVERE, null, ex);
+                            catch (SQLException e) {
+                                // TODO Auto-generated catch block
+                                e.printStackTrace();
                             }
 			}
 		});
