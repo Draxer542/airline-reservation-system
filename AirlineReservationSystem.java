@@ -24,7 +24,7 @@ public class AirlineReservationSystem {
 	// Connection to the mySQL database
 	static DatabaseConnection connect = new DatabaseConnection(
 			"jdbc:mysql://localhost/cs157a", "com.mysql.jdbc.Driver", "root",
-			"3214");
+			"1234");
         static private String seatID = "";
         static private int compareExp = 0;
         
@@ -124,7 +124,10 @@ public class AirlineReservationSystem {
 		pilotButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e)
 			{
-				adminPilots();
+				
+				//adminPilots();
+				PilotAdmin pa = new PilotAdmin(connect);
+				pa.admin();
 				
 			}
 		});
@@ -132,7 +135,9 @@ public class AirlineReservationSystem {
 		planeButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e)
 			{
-				adminPlanes();
+				//adminPlanes();
+				PlaneAdmin pa = new PlaneAdmin(connect);
+				pa.admin();
 				
 			}
 		});
@@ -140,7 +145,9 @@ public class AirlineReservationSystem {
 		flightButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e)
 			{
-				adminFlights();
+				//adminFlights();
+				FlightAdmin fa = new FlightAdmin(connect);
+				fa.admin();
 				
 			}
 		});
@@ -148,7 +155,9 @@ public class AirlineReservationSystem {
 		passengerButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e)
 			{
-				adminPassengers();
+				//adminPassengers();
+				PassengerAdmin pa = new PassengerAdmin(connect);
+				pa.admin();
 				
 			}
 		});
@@ -156,8 +165,9 @@ public class AirlineReservationSystem {
 		seatButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e)
 			{
-				adminSeats();
-				
+				//adminSeats();
+				SeatAdmin sa = new SeatAdmin(connect);
+				sa.admin();
 			}
 		});
 		
@@ -186,880 +196,881 @@ public class AirlineReservationSystem {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
-	/**			adminPilots
-	 * This is the admin menu for the pilot relation.
-	 * Admin can add, edit, delete, or view pilots.
-	 */
-	public static void adminPilots(){
-		
-		final JFrame frame = new JFrame();
-		frame.setVisible(true);
-		frame.setBounds(200, 200, 578, 300);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		JLabel lblNewLabel = new JLabel("Enter information to filter and view pilots. To view all pilots, leave all the fields blank.");
-		
-		JLabel label = new JLabel("To add a pilot, enter name and years of experience. To delete a pilot, enter pilot name or pilotID.");
-		
-		JLabel nameLabel = new JLabel("Name");
-		
-		final JTextField nameField = new JTextField();
-		nameField.setColumns(10);
-		
-		final JLabel pilotLabel = new JLabel("Pilot ID");
-		
-		final JTextField pilotField = new JTextField();
-		pilotField.setColumns(10);
-		
-		JLabel expLabel = new JLabel("Years of Experience");
-		
-		final JTextField expField = new JTextField();
-		expField.setColumns(10);
-		final JCheckBox greaterBox = new JCheckBox("Greater than");
-		
-		final JCheckBox lessBox = new JCheckBox("Less Than");
-		
-		JButton btnAdd = new JButton("Add");
-		//call addPilot if view button is clicked and fields are not empty
-		btnAdd.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				if(addPilot(nameField.getText(), expField.getText() + ""))
-                                    JOptionPane.showMessageDialog(frame, "Pilot " + nameField.getText() + " has been added to database.");
-                                else
-                                    JOptionPane.showMessageDialog(frame, "Please enter pilot name and years of experience!");
-
-			}
-		});
-		JButton btnView = new JButton("View and Edit");
-		
-		//call viewPilots if view button is clicked
-		btnView.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent ae){
-                                if(!expField.getText().equals("") && greaterBox.isSelected() && lessBox.isSelected())
-                                        JOptionPane.showMessageDialog(frame, "Please only pick either greater or less than!");
-                                else
-                                {
-                                        if(greaterBox.isSelected())
-                                            compareExp = 1;
-                                        else if(lessBox.isSelected())
-                                            compareExp = -1;
-                                        else
-                                            compareExp = 0;
-                                        viewPilots(nameField.getText(), pilotField.getText() +"", expField.getText() + "", compareExp);
-                                }
-                        }
-		});
-		
-		JButton btnDelete = new JButton("Delete");
-		btnDelete.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent ae){
-                        try {
-                                if(deletePilot(nameField.getText(), pilotField.getText() + ""))
-                                        JOptionPane.showMessageDialog(frame, "Pilot " + nameField.getText() + " " + pilotField.getText() + " has been deleted database.");
-                                else
-                                        JOptionPane.showMessageDialog(frame, "Please enter pilot name or pilot ID that exists in the database!");
-                        } catch (SQLException e) {
-                            e.printStackTrace();
-                        }
-
-			}
-		});
-                
-		JButton btnCloseWindow = new JButton("Close Window");
-                btnCloseWindow.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				
-				frame.dispose();
-			}
-		});
-		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
-		groupLayout.setHorizontalGroup(
-			groupLayout.createParallelGroup(Alignment.LEADING)
-				.addGroup(groupLayout.createSequentialGroup()
-					.addContainerGap()
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(label)
-						.addComponent(lblNewLabel)
-						.addGroup(groupLayout.createSequentialGroup()
-							.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
-								.addGroup(groupLayout.createSequentialGroup()
-									.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-										.addComponent(nameLabel)
-										.addComponent(pilotLabel))
-									.addGap(80)
-									.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
-										.addComponent(nameField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-										.addComponent(pilotField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-								.addGroup(groupLayout.createSequentialGroup()
-									.addComponent(expLabel)
-									.addGap(18)
-									.addComponent(expField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-							.addGap(18)
-							.addComponent(greaterBox)
-							.addGap(18)
-							.addComponent(lessBox))
-						.addGroup(groupLayout.createSequentialGroup()
-							.addComponent(btnAdd)
-							.addGap(36)
-							.addGap(39)
-							.addComponent(btnView)
-							.addGap(41)
-							.addComponent(btnDelete)
-							.addGap(49)
-							.addComponent(btnCloseWindow)))
-					.addContainerGap(78, Short.MAX_VALUE))
-		);
-		groupLayout.setVerticalGroup(
-			groupLayout.createParallelGroup(Alignment.LEADING)
-				.addGroup(groupLayout.createSequentialGroup()
-					.addContainerGap()
-					.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(label, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
-					.addGap(26)
-					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(nameLabel)
-						.addComponent(nameField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addGap(18)
-					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(pilotField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(pilotLabel))
-					.addGap(18)
-					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(expLabel)
-						.addComponent(expField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(greaterBox)
-						.addComponent(lessBox))
-					.addGap(18)
-					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(btnAdd)
-						.addComponent(btnView)
-						.addComponent(btnDelete)
-						.addComponent(btnCloseWindow))
-					.addGap(22)
-					.addComponent(label)
-					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-		);
-		frame.getContentPane().setLayout(groupLayout);
-
-	}
 	
-        public static boolean addPilot(String name, String exp)
-        {
-                ResultSet rs;
-		int maxID = 0;
-		//default sql statement(if no attributes are specified
-		String sql = "SELECT max(pilotID) as max FROM Pilot";
-                rs = connect.execute(sql);
-                
-                try {
-                    while(rs.next())
-                    {
-                        maxID = rs.getInt("max");
-                        System.out.println(maxID);
-                    }
-                }
-                catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-                }
-                int newID = maxID + 1;
-                if(name.equals("") || exp.equals(""))
-                    return false;
-                sql = "INSERT INTO Pilot VALUES(\"" + name +"\", " + newID + ", " + exp + ")";
-                try {
-			connect.executeUpdate(sql);
-                        return true;
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-                return false;
-        }//addPilot
-        
-	/**				viewPilots
-	 * This method creates a window for the user to view pilots.
-	 * Attributes are given by the adminPilots method
-	 * 
-	 * @param name - name of pilot to find
-	 * @param pID - id of pilot to find
-	 * @param exp - exp of pilot to find
-	 */
-	public static void viewPilots(String name, String pID, String exp, int compareExp){
-		
-		ResultSet rs;
-		
-		//default sql statement(if no attributes are specified
-		String sql = "SELECT * FROM Pilot";
-		
-		//if any attribute is specified, append WHERE to sql
-		if(name.compareTo("") + pID.compareTo("") + exp.compareTo("") != 0)
-		{
-			sql = sql + " WHERE ";
-			
-			//append specified attribute to sql
-			if(name.compareTo("") != 0)
-				sql = sql + "pName = \"" + name + "\" ";
-                        else if(pID.compareTo("") != 0)
-				sql = sql + "pilotID = " + pID + " ";
-                        else if(exp.compareTo("") != 0 && compareExp == 0)
-				sql = sql + "yrExp = " + exp;
-                        else if(exp.compareTo("") != 0 && compareExp > 0)
-				sql = sql + "yrExp > " + exp;
-                        else if(exp.compareTo("") != 0 && compareExp < 0)
-				sql = sql + "yrExp < " + exp;
-			
-		}
-		
-		//CHECK, DELETE WHEN DONE
-		System.out.println(sql);
-		rs = connect.execute(sql);
-		
-		//Create frame
-		final JFrame frame = new JFrame();
-		frame.setBounds(400, 100, 500, 500);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setVisible(true);
-		JPanel panel = new JPanel();
-		frame.add(panel);
-		
-		
-		// get number of rows
-		int rowNum = getRowNum(rs);
-
-		//fill Object[][] array with values
-		int i = 0;
-		Object[][] data = new Object[rowNum][3];
-		try {
-			while (rs.next()) {
-
-										
-						data[i][0] = rs.getString("pName");
-						data[i][1] = rs.getInt("pilotID");
-						data[i][2] = rs.getInt("yrExp");
-						
-						i++;
-					}
-			
-			
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		//header table
-		String columnNames[] = {"pName", "Pilot ID", "yrExp"}; 
-		
-		//fill table
-		final JTable table = new JTable(data, columnNames);
-		table.setPreferredScrollableViewportSize(new Dimension(450, 300));
-		table.setFillsViewportHeight(true);
-		JScrollPane scrollPane = new JScrollPane(table);
-                JLabel text = new JLabel("Edit database except for PilotID");
-                panel.add(text);
-		panel.add(scrollPane);
-                
-                //tablemodellisten for editing database
-                table.getModel().addTableModelListener(new TableModelListener(){
-			public void tableChanged(TableModelEvent e)
-			{
-                                int row = e.getFirstRow();
-                                int column = e.getColumn();
-                                TableModel model = (TableModel)e.getSource();
-                                String columnName = model.getColumnName(column);
-                                Object data = model.getValueAt(row, column);
-                                int pilotID = (int) table.getValueAt(row, 1);
-				if(column != 1)
-                                    editPilot(columnName, data, pilotID);
-				
-			}
-		});
-                JButton closeButton = new JButton("Close");
-                closeButton.addActionListener(new ActionListener(){
-                        public void actionPerformed(ActionEvent e)
-                        {
-                                frame.dispose();
-                        }
-                });
-                panel.add(closeButton);
-		
-	}//viewPilots
-	
-        /*
-         * Admin edit Pilot database except for pilotID
-         */
-        public static void editPilot(String columnName, Object data, int pilotID){
-                String sql = "UPDATE Pilot SET " + columnName + " = \"" + data + "\" WHERE pilotID = " + pilotID;
-                try {
-			connect.executeUpdate(sql);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        }
-	
-        public static boolean deletePilot(String name, String id) throws SQLException
-        {
-                if(name.equals("") && id.equals(""))
-                        return false;
-                ResultSet rs;
-		
-                //default sql statement(if no attributes are specified
-                String sql = "SELECT * FROM Pilot WHERE pName = \'" + name + "\'";
-                rs = connect.execute(sql);
-                if(!rs.next())
-                {
-                        sql = "SELECT * FROM Pilot WHERE pilotID = \'" + id + "\'";
-                        rs = connect.execute(sql);
-                        if(!rs.next())
-                                return false;
-                }
-		
-		
-                if(name.compareTo("") != 0)
-                        sql = "DELETE FROM pilot WHERE pName = \'" + name + "\'";
-                else if(id.compareTo("") != 0)
-                        sql = "DELETE FROM pilot WHERE pilotID = \'" + id + "\'";
-			
-		
-                
-                try {
-                        System.out.println(sql);
-			connect.executeUpdate(sql);
-                        return true;
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-                        return false;
-		}
-        }
-	public static void adminPlanes(){
-		
-		JFrame frame = new JFrame();
-		frame.setVisible(true);
-		frame.setBounds(100, 100, 578, 256);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		JLabel lblNewLabel = new JLabel("Please enter information about the pilot. Leave fields blank if you wish to view all pilots.");
-		
-		JLabel label = new JLabel("");
-		
-		JButton btnAdd = new JButton("Add");
-		
-		JButton btnEdit = new JButton("Edit");
-		
-		JButton btnView = new JButton("View");
-		
-		JButton btnDelete = new JButton("Delete");
-		
-		JButton btnCloseWindow = new JButton("Close Window");
-		
-		JLabel idLabel = new JLabel("Plane ID");
-		
-		JTextField idField = new JTextField();
-		idField.setColumns(10);
-		
-		JLabel ageLabel = new JLabel("Plane Age");
-		
-		JTextField  ageField = new JTextField();
-		ageField.setColumns(10);
-		
-		JCheckBox olderBox = new JCheckBox("Older Than");
-		
-		JCheckBox youngerBox = new JCheckBox("Younger Than");
-		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
-		groupLayout.setHorizontalGroup(
-			groupLayout.createParallelGroup(Alignment.LEADING)
-				.addGroup(groupLayout.createSequentialGroup()
-					.addContainerGap()
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(label)
-						.addComponent(lblNewLabel)
-						.addGroup(groupLayout.createSequentialGroup()
-							.addComponent(idLabel)
-							.addGap(18)
-							.addComponent(idField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-						.addGroup(groupLayout.createSequentialGroup()
-							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-								.addGroup(groupLayout.createSequentialGroup()
-									.addComponent(ageLabel)
-									.addPreferredGap(ComponentPlacement.UNRELATED)
-									.addComponent(ageField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-								.addGroup(groupLayout.createSequentialGroup()
-									.addComponent(btnAdd)
-									.addGap(34)
-									.addComponent(btnEdit)))
-							.addGap(33)
-							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-								.addComponent(olderBox)
-								.addComponent(btnView))
-							.addGap(18)
-							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-								.addGroup(groupLayout.createSequentialGroup()
-									.addComponent(btnDelete)
-									.addGap(46)
-									.addComponent(btnCloseWindow))
-								.addComponent(youngerBox))))
-					.addContainerGap(68, Short.MAX_VALUE))
-		);
-		groupLayout.setVerticalGroup(
-			groupLayout.createParallelGroup(Alignment.LEADING)
-				.addGroup(groupLayout.createSequentialGroup()
-					.addContainerGap()
-					.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
-					.addGap(18)
-					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(idLabel)
-						.addComponent(idField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addGap(18)
-					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(ageLabel)
-						.addComponent(ageField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(olderBox)
-						.addComponent(youngerBox))
-					.addGap(50)
-					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(btnAdd)
-						.addComponent(btnEdit)
-						.addComponent(btnView)
-						.addComponent(btnDelete)
-						.addComponent(btnCloseWindow))
-					.addGap(51)
-					.addComponent(label)
-					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-		);
-		frame.getContentPane().setLayout(groupLayout);
-		
-	}
-	
-	
-	public static void adminFlights()
-	{
-		JFrame frame = new JFrame();
-		frame.setVisible(true);
-		frame.setBounds(100, 100, 578, 271);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		JLabel lblNewLabel = new JLabel("Please enter information about the pilot. Leave fields blank if you wish to view all pilots.");
-		
-		JLabel label = new JLabel("");
-		
-		JButton btnAdd = new JButton("Add");
-		
-		JButton btnEdit = new JButton("Edit");
-		
-		JButton btnView = new JButton("View");
-		
-		JButton btnDelete = new JButton("Delete");
-		
-		JButton btnCloseWindow = new JButton("Close Window");
-		
-		JLabel flightLabel = new JLabel("Flight ID");
-		
-		JTextField flightField = new JTextField();
-		flightField.setColumns(10);
-		
-		JLabel destLabel = new JLabel("Destination");
-		
-		JTextField destField = new JTextField();
-		destField.setColumns(10);
-		
-		JLabel depDateLabel = new JLabel("Departure Date");
-		
-		JTextField depDateField = new JTextField();
-		depDateField.setColumns(10);
-		
-		JLabel depTimeLabel = new JLabel("Departure Time");
-		
-		JTextField depTimeField = new JTextField();
-		depTimeField.setColumns(10);
-		
-		JLabel planeLabel = new JLabel("Plane ID");
-		
-		JTextField planeField = new JTextField();
-		planeField.setColumns(10);
-		
-		JLabel gateLabel = new JLabel("Gate ID");
-		
-		JTextField gateField = new JTextField();
-		gateField.setColumns(10);
-		
-		JLabel pilotLabel = new JLabel("PilotID");
-		
-		JTextField pilotField = new JTextField();
-		pilotField.setColumns(10);
-		
-		JCheckBox befDateBox = new JCheckBox("Before");
-		
-		JCheckBox afDateBox = new JCheckBox("After");
-		
-		JCheckBox befTimeBox = new JCheckBox("Before");
-		
-		JCheckBox afTimeBox = new JCheckBox("After");
-		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
-		groupLayout.setHorizontalGroup(
-			groupLayout.createParallelGroup(Alignment.LEADING)
-				.addGroup(groupLayout.createSequentialGroup()
-					.addContainerGap()
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(label)
-						.addComponent(lblNewLabel)
-						.addGroup(groupLayout.createSequentialGroup()
-							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-								.addGroup(groupLayout.createSequentialGroup()
-									.addComponent(btnAdd)
-									.addGap(34)
-									.addComponent(btnEdit))
-								.addGroup(groupLayout.createSequentialGroup()
-									.addComponent(flightLabel)
-									.addPreferredGap(ComponentPlacement.UNRELATED)
-									.addComponent(flightField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-								.addGroup(groupLayout.createSequentialGroup()
-									.addGap(33)
-									.addComponent(btnView)
-									.addGap(42)
-									.addComponent(btnDelete)
-									.addGap(46)
-									.addComponent(btnCloseWindow))
-								.addGroup(groupLayout.createSequentialGroup()
-									.addGap(10)
-									.addComponent(planeLabel)
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(planeField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-									.addGap(10)
-									.addComponent(gateLabel)
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(gateField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-									.addPreferredGap(ComponentPlacement.UNRELATED)
-									.addComponent(pilotLabel)
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(pilotField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))))
-						.addGroup(groupLayout.createSequentialGroup()
-							.addComponent(depDateLabel)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(depDateField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.UNRELATED)
-							.addComponent(befDateBox)
-							.addPreferredGap(ComponentPlacement.UNRELATED)
-							.addComponent(afDateBox))
-						.addGroup(groupLayout.createSequentialGroup()
-							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-								.addComponent(depTimeLabel)
-								.addComponent(destLabel))
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-								.addComponent(destField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(depTimeField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-							.addPreferredGap(ComponentPlacement.UNRELATED)
-							.addComponent(befTimeBox)
-							.addGap(4)
-							.addComponent(afTimeBox)))
-					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-		);
-		groupLayout.setVerticalGroup(
-			groupLayout.createParallelGroup(Alignment.LEADING)
-				.addGroup(groupLayout.createSequentialGroup()
-					.addContainerGap()
-					.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
-					.addGap(18)
-					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(flightLabel)
-						.addComponent(flightField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(planeLabel)
-						.addComponent(planeField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(gateField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(gateLabel)
-						.addComponent(pilotLabel)
-						.addComponent(pilotField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(depDateLabel)
-						.addComponent(depDateField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(befDateBox)
-						.addComponent(afDateBox))
-					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(depTimeLabel)
-						.addComponent(depTimeField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(afTimeBox)
-						.addComponent(befTimeBox))
-					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(destLabel)
-						.addComponent(destField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addGap(21)
-					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(btnAdd)
-						.addComponent(btnEdit)
-						.addComponent(btnView)
-						.addComponent(btnDelete)
-						.addComponent(btnCloseWindow))
-					.addGap(51)
-					.addComponent(label)
-					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-		);
-		frame.getContentPane().setLayout(groupLayout);
-	}
-	
-	public static void adminPassengers()
-	{
-	
-		JFrame frame = new JFrame();
-		frame.setVisible(true);
-		frame.setBounds(100, 100, 578, 271);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		JLabel lblNewLabel = new JLabel("Please enter information about the pilot. Leave fields blank if you wish to view all pilots.");
-		
-		JLabel label = new JLabel("");
-		
-		JButton btnAdd = new JButton("Add");
-		
-		JButton btnEdit = new JButton("Edit");
-		
-		JButton btnView = new JButton("View");
-		
-		JButton btnDelete = new JButton("Delete");
-		
-		JButton btnCloseWindow = new JButton("Close Window");
-		
-		JLabel nameLabel = new JLabel("Name");
-		
-		JTextField nameField = new JTextField();
-		nameField.setColumns(10);
-		
-		JLabel ageLabel = new JLabel("Age");
-		
-		JTextField ageField = new JTextField();
-		ageField.setColumns(10);
-		
-		JLabel flightLabel = new JLabel("Flight ID");
-		
-		JTextField flightField = new JTextField();
-		flightField.setColumns(10);
-		
-		JLabel seatLabel = new JLabel("Seat ID");
-		
-		JTextField seatField = new JTextField();
-		seatField.setColumns(10);
-		
-		JCheckBox firstClassBox = new JCheckBox("First Class");
-		
-		JLabel passLabel = new JLabel("Passenger ID");
-		
-		JTextField pasField = new JTextField();
-		pasField.setColumns(10);
-		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
-		groupLayout.setHorizontalGroup(
-			groupLayout.createParallelGroup(Alignment.LEADING)
-				.addGroup(groupLayout.createSequentialGroup()
-					.addContainerGap()
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(label)
-						.addComponent(lblNewLabel)
-						.addGroup(groupLayout.createSequentialGroup()
-							.addComponent(flightLabel)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(flightField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-						.addGroup(groupLayout.createSequentialGroup()
-							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-								.addGroup(groupLayout.createSequentialGroup()
-									.addComponent(btnAdd)
-									.addGap(34)
-									.addComponent(btnEdit))
-								.addGroup(groupLayout.createSequentialGroup()
-									.addComponent(nameLabel)
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(nameField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-								.addGroup(groupLayout.createSequentialGroup()
-									.addComponent(ageLabel)
-									.addPreferredGap(ComponentPlacement.UNRELATED)
-									.addComponent(ageField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-							.addGap(33)
-							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-								.addGroup(groupLayout.createSequentialGroup()
-									.addComponent(passLabel)
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(pasField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-								.addGroup(groupLayout.createSequentialGroup()
-									.addComponent(seatLabel)
-									.addPreferredGap(ComponentPlacement.UNRELATED)
-									.addComponent(seatField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-									.addGap(18)
-									.addComponent(firstClassBox))
-								.addGroup(groupLayout.createSequentialGroup()
-									.addComponent(btnView)
-									.addGap(42)
-									.addComponent(btnDelete)
-									.addGap(46)
-									.addComponent(btnCloseWindow)))))
-					.addContainerGap(78, Short.MAX_VALUE))
-		);
-		groupLayout.setVerticalGroup(
-			groupLayout.createParallelGroup(Alignment.LEADING)
-				.addGroup(groupLayout.createSequentialGroup()
-					.addContainerGap()
-					.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
-					.addGap(18)
-					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(nameLabel)
-						.addComponent(nameField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(seatLabel)
-						.addComponent(seatField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(firstClassBox))
-					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(ageLabel)
-						.addComponent(ageField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(passLabel)
-						.addComponent(pasField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(flightLabel)
-						.addComponent(flightField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addGap(55)
-					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(btnAdd)
-						.addComponent(btnEdit)
-						.addComponent(btnView)
-						.addComponent(btnDelete)
-						.addComponent(btnCloseWindow))
-					.addGap(51)
-					.addComponent(label)
-					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-		);
-		frame.getContentPane().setLayout(groupLayout);
-		
-	}
-	
-	public static void adminSeats(){
-		
-		JFrame frame = new JFrame();
-		frame.setVisible(true);
-		frame.setBounds(100, 100, 578, 256);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		JLabel lblNewLabel = new JLabel("Please enter information about the seat. Leave fields blank if you wish to view all seatss.");
-		
-		JLabel label = new JLabel("");
-		
-		JLabel lblSeatId = new JLabel("Seat ID");
-		
-		JTextField seatField = new JTextField();
-		
-		
-		
-		seatField.setColumns(10);
-		
-		JLabel rowLabel = new JLabel("Row");
-		
-		JTextField rowField = new JTextField();
-		rowField.setColumns(10);
-		
-		JLabel seatNoLabel = new JLabel("Seat Number");
-		
-		JTextField seatNoField = new JTextField();
-		seatNoField.setColumns(10);
-		
-		JLabel planeIDLabel = new JLabel("Plane ID");
-		
-		JTextField planeIDField = new JTextField();
-		planeIDField.setColumns(10);
-		
-		JCheckBox takenBox = new JCheckBox("Taken");
-		
-		JButton btnAdd = new JButton("Add");
-		
-		JButton btnEdit = new JButton("Edit");
-		
-		JButton btnView = new JButton("View");
-		
-		JButton btnDelete = new JButton("Delete");
-		
-		JButton btnCloseWindow = new JButton("Close Window");
-		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
-		groupLayout.setHorizontalGroup(
-			groupLayout.createParallelGroup(Alignment.LEADING)
-				.addGroup(groupLayout.createSequentialGroup()
-					.addContainerGap()
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblSeatId)
-						.addComponent(rowLabel))
-					.addContainerGap(516, Short.MAX_VALUE))
-				.addGroup(groupLayout.createSequentialGroup()
-					.addContainerGap()
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
-							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-								.addComponent(label)
-								.addComponent(lblNewLabel))
-							.addGap(66))
-						.addGroup(groupLayout.createSequentialGroup()
-							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-								.addComponent(seatNoLabel)
-								.addComponent(planeIDLabel))
-							.addGap(18)
-							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-								.addComponent(seatField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(planeIDField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addGroup(groupLayout.createSequentialGroup()
-									.addComponent(seatNoField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-									.addGap(18)
-									.addComponent(takenBox))
-								.addComponent(rowField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-							.addPreferredGap(ComponentPlacement.RELATED, 150, Short.MAX_VALUE)
-							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-								.addComponent(btnAdd)
-								.addComponent(btnEdit)
-								.addComponent(btnView)
-								.addComponent(btnDelete)
-								.addComponent(btnCloseWindow))
-							.addContainerGap(58, Short.MAX_VALUE))))
-		);
-		groupLayout.setVerticalGroup(
-			groupLayout.createParallelGroup(Alignment.LEADING)
-				.addGroup(groupLayout.createSequentialGroup()
-					.addContainerGap()
-					.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
-					.addGap(26)
-					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblSeatId)
-						.addComponent(seatField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(btnAdd))
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addGroup(groupLayout.createSequentialGroup()
-							.addPreferredGap(ComponentPlacement.UNRELATED)
-							.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-								.addComponent(rowLabel)
-								.addComponent(rowField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-							.addGap(18)
-							.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-								.addComponent(seatNoLabel)
-								.addComponent(seatNoField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(takenBox))
-							.addPreferredGap(ComponentPlacement.UNRELATED)
-							.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-								.addComponent(planeIDLabel)
-								.addComponent(planeIDField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-							.addGap(19)
-							.addComponent(label))
-						.addGroup(groupLayout.createSequentialGroup()
-							.addGap(6)
-							.addComponent(btnEdit)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(btnView)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(btnDelete)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(btnCloseWindow)))
-					.addContainerGap(11, Short.MAX_VALUE))
-		);
-		frame.getContentPane().setLayout(groupLayout);
-	}
-	
-	
-	
-	
+//	/**			adminPilots
+//	 * This is the admin menu for the pilot relation.
+//	 * Admin can add, edit, delete, or view pilots.
+//	 */
+//	public static void adminPilots(){
+//		
+//		final JFrame frame = new JFrame();
+//		frame.setVisible(true);
+//		frame.setBounds(200, 200, 578, 300);
+//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		
+//		JLabel lblNewLabel = new JLabel("Enter information to filter and view pilots. To view all pilots, leave all the fields blank.");
+//		
+//		JLabel label = new JLabel("To add a pilot, enter name and years of experience. To delete a pilot, enter pilot name or pilotID.");
+//		
+//		JLabel nameLabel = new JLabel("Name");
+//		
+//		final JTextField nameField = new JTextField();
+//		nameField.setColumns(10);
+//		
+//		final JLabel pilotLabel = new JLabel("Pilot ID");
+//		
+//		final JTextField pilotField = new JTextField();
+//		pilotField.setColumns(10);
+//		
+//		JLabel expLabel = new JLabel("Years of Experience");
+//		
+//		final JTextField expField = new JTextField();
+//		expField.setColumns(10);
+//		final JCheckBox greaterBox = new JCheckBox("Greater than");
+//		
+//		final JCheckBox lessBox = new JCheckBox("Less Than");
+//		
+//		JButton btnAdd = new JButton("Add");
+//		//call addPilot if view button is clicked and fields are not empty
+//		btnAdd.addActionListener(new ActionListener(){
+//			public void actionPerformed(ActionEvent e){
+//				if(addPilot(nameField.getText(), expField.getText() + ""))
+//                                    JOptionPane.showMessageDialog(frame, "Pilot " + nameField.getText() + " has been added to database.");
+//                                else
+//                                    JOptionPane.showMessageDialog(frame, "Please enter pilot name and years of experience!");
+//
+//			}
+//		});
+//		JButton btnView = new JButton("View and Edit");
+//		
+//		//call viewPilots if view button is clicked
+//		btnView.addActionListener(new ActionListener(){
+//			public void actionPerformed(ActionEvent ae){
+//                                if(!expField.getText().equals("") && greaterBox.isSelected() && lessBox.isSelected())
+//                                        JOptionPane.showMessageDialog(frame, "Please only pick either greater or less than!");
+//                                else
+//                                {
+//                                        if(greaterBox.isSelected())
+//                                            compareExp = 1;
+//                                        else if(lessBox.isSelected())
+//                                            compareExp = -1;
+//                                        else
+//                                            compareExp = 0;
+//                                        viewPilots(nameField.getText(), pilotField.getText() +"", expField.getText() + "", compareExp);
+//                                }
+//                        }
+//		});
+//		
+//		JButton btnDelete = new JButton("Delete");
+//		btnDelete.addActionListener(new ActionListener(){
+//			public void actionPerformed(ActionEvent ae){
+//                        try {
+//                                if(deletePilot(nameField.getText(), pilotField.getText() + ""))
+//                                        JOptionPane.showMessageDialog(frame, "Pilot " + nameField.getText() + " " + pilotField.getText() + " has been deleted database.");
+//                                else
+//                                        JOptionPane.showMessageDialog(frame, "Please enter pilot name or pilot ID that exists in the database!");
+//                        } catch (SQLException e) {
+//                            e.printStackTrace();
+//                        }
+//
+//			}
+//		});
+//                
+//		JButton btnCloseWindow = new JButton("Close Window");
+//                btnCloseWindow.addActionListener(new ActionListener(){
+//			public void actionPerformed(ActionEvent e){
+//				
+//				frame.dispose();
+//			}
+//		});
+//		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
+//		groupLayout.setHorizontalGroup(
+//			groupLayout.createParallelGroup(Alignment.LEADING)
+//				.addGroup(groupLayout.createSequentialGroup()
+//					.addContainerGap()
+//					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+//						.addComponent(label)
+//						.addComponent(lblNewLabel)
+//						.addGroup(groupLayout.createSequentialGroup()
+//							.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
+//								.addGroup(groupLayout.createSequentialGroup()
+//									.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+//										.addComponent(nameLabel)
+//										.addComponent(pilotLabel))
+//									.addGap(80)
+//									.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
+//										.addComponent(nameField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+//										.addComponent(pilotField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+//								.addGroup(groupLayout.createSequentialGroup()
+//									.addComponent(expLabel)
+//									.addGap(18)
+//									.addComponent(expField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+//							.addGap(18)
+//							.addComponent(greaterBox)
+//							.addGap(18)
+//							.addComponent(lessBox))
+//						.addGroup(groupLayout.createSequentialGroup()
+//							.addComponent(btnAdd)
+//							.addGap(36)
+//							.addGap(39)
+//							.addComponent(btnView)
+//							.addGap(41)
+//							.addComponent(btnDelete)
+//							.addGap(49)
+//							.addComponent(btnCloseWindow)))
+//					.addContainerGap(78, Short.MAX_VALUE))
+//		);
+//		groupLayout.setVerticalGroup(
+//			groupLayout.createParallelGroup(Alignment.LEADING)
+//				.addGroup(groupLayout.createSequentialGroup()
+//					.addContainerGap()
+//					.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
+//                                        .addComponent(label, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
+//					.addGap(26)
+//					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+//						.addComponent(nameLabel)
+//						.addComponent(nameField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+//					.addGap(18)
+//					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+//						.addComponent(pilotField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+//						.addComponent(pilotLabel))
+//					.addGap(18)
+//					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+//						.addComponent(expLabel)
+//						.addComponent(expField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+//						.addComponent(greaterBox)
+//						.addComponent(lessBox))
+//					.addGap(18)
+//					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+//						.addComponent(btnAdd)
+//						.addComponent(btnView)
+//						.addComponent(btnDelete)
+//						.addComponent(btnCloseWindow))
+//					.addGap(22)
+//					.addComponent(label)
+//					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+//		);
+//		frame.getContentPane().setLayout(groupLayout);
+//
+//	}
+//	
+//        public static boolean addPilot(String name, String exp)
+//        {
+//                ResultSet rs;
+//		int maxID = 0;
+//		//default sql statement(if no attributes are specified
+//		String sql = "SELECT max(pilotID) as max FROM Pilot";
+//                rs = connect.execute(sql);
+//                
+//                try {
+//                    while(rs.next())
+//                    {
+//                        maxID = rs.getInt("max");
+//                        System.out.println(maxID);
+//                    }
+//                }
+//                catch (SQLException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//                }
+//                int newID = maxID + 1;
+//                if(name.equals("") || exp.equals(""))
+//                    return false;
+//                sql = "INSERT INTO Pilot VALUES(\"" + name +"\", " + newID + ", " + exp + ")";
+//                try {
+//			connect.executeUpdate(sql);
+//                        return true;
+//		} catch (SQLException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//                return false;
+//        }//addPilot
+//        
+//	/**				viewPilots
+//	 * This method creates a window for the user to view pilots.
+//	 * Attributes are given by the adminPilots method
+//	 * 
+//	 * @param name - name of pilot to find
+//	 * @param pID - id of pilot to find
+//	 * @param exp - exp of pilot to find
+//	 */
+//	public static void viewPilots(String name, String pID, String exp, int compareExp){
+//		
+//		ResultSet rs;
+//		
+//		//default sql statement(if no attributes are specified
+//		String sql = "SELECT * FROM Pilot";
+//		
+//		//if any attribute is specified, append WHERE to sql
+//		if(name.compareTo("") + pID.compareTo("") + exp.compareTo("") != 0)
+//		{
+//			sql = sql + " WHERE ";
+//			
+//			//append specified attribute to sql
+//			if(name.compareTo("") != 0)
+//				sql = sql + "pName = \"" + name + "\" ";
+//                        else if(pID.compareTo("") != 0)
+//				sql = sql + "pilotID = " + pID + " ";
+//                        else if(exp.compareTo("") != 0 && compareExp == 0)
+//				sql = sql + "yrExp = " + exp;
+//                        else if(exp.compareTo("") != 0 && compareExp > 0)
+//				sql = sql + "yrExp > " + exp;
+//                        else if(exp.compareTo("") != 0 && compareExp < 0)
+//				sql = sql + "yrExp < " + exp;
+//			
+//		}
+//		
+//		//CHECK, DELETE WHEN DONE
+//		System.out.println(sql);
+//		rs = connect.execute(sql);
+//		
+//		//Create frame
+//		final JFrame frame = new JFrame();
+//		frame.setBounds(400, 100, 500, 500);
+//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		frame.setVisible(true);
+//		JPanel panel = new JPanel();
+//		frame.add(panel);
+//		
+//		
+//		// get number of rows
+//		int rowNum = getRowNum(rs);
+//
+//		//fill Object[][] array with values
+//		int i = 0;
+//		Object[][] data = new Object[rowNum][3];
+//		try {
+//			while (rs.next()) {
+//
+//										
+//						data[i][0] = rs.getString("pName");
+//						data[i][1] = rs.getInt("pilotID");
+//						data[i][2] = rs.getInt("yrExp");
+//						
+//						i++;
+//					}
+//			
+//			
+//		} catch (SQLException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+//		//header table
+//		String columnNames[] = {"pName", "Pilot ID", "yrExp"}; 
+//		
+//		//fill table
+//		final JTable table = new JTable(data, columnNames);
+//		table.setPreferredScrollableViewportSize(new Dimension(450, 300));
+//		table.setFillsViewportHeight(true);
+//		JScrollPane scrollPane = new JScrollPane(table);
+//                JLabel text = new JLabel("Edit database except for PilotID");
+//                panel.add(text);
+//		panel.add(scrollPane);
+//                
+//                //tablemodellisten for editing database
+//                table.getModel().addTableModelListener(new TableModelListener(){
+//			public void tableChanged(TableModelEvent e)
+//			{
+//                                int row = e.getFirstRow();
+//                                int column = e.getColumn();
+//                                TableModel model = (TableModel)e.getSource();
+//                                String columnName = model.getColumnName(column);
+//                                Object data = model.getValueAt(row, column);
+//                                int pilotID = (int) table.getValueAt(row, 1);
+//				if(column != 1)
+//                                    editPilot(columnName, data, pilotID);
+//				
+//			}
+//		});
+//                JButton closeButton = new JButton("Close");
+//                closeButton.addActionListener(new ActionListener(){
+//                        public void actionPerformed(ActionEvent e)
+//                        {
+//                                frame.dispose();
+//                        }
+//                });
+//                panel.add(closeButton);
+//		
+//	}//viewPilots
+//	
+//        /*
+//         * Admin edit Pilot database except for pilotID
+//         */
+//        public static void editPilot(String columnName, Object data, int pilotID){
+//                String sql = "UPDATE Pilot SET " + columnName + " = \"" + data + "\" WHERE pilotID = " + pilotID;
+//                try {
+//			connect.executeUpdate(sql);
+//		} catch (SQLException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//        }
+//	
+//        public static boolean deletePilot(String name, String id) throws SQLException
+//        {
+//                if(name.equals("") && id.equals(""))
+//                        return false;
+//                ResultSet rs;
+//		
+//                //default sql statement(if no attributes are specified
+//                String sql = "SELECT * FROM Pilot WHERE pName = \'" + name + "\'";
+//                rs = connect.execute(sql);
+//                if(!rs.next())
+//                {
+//                        sql = "SELECT * FROM Pilot WHERE pilotID = \'" + id + "\'";
+//                        rs = connect.execute(sql);
+//                        if(!rs.next())
+//                                return false;
+//                }
+//		
+//		
+//                if(name.compareTo("") != 0)
+//                        sql = "DELETE FROM pilot WHERE pName = \'" + name + "\'";
+//                else if(id.compareTo("") != 0)
+//                        sql = "DELETE FROM pilot WHERE pilotID = \'" + id + "\'";
+//			
+//		
+//                
+//                try {
+//                        System.out.println(sql);
+//			connect.executeUpdate(sql);
+//                        return true;
+//		} catch (SQLException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//                        return false;
+//		}
+//        }
+//	public static void adminPlanes(){
+//		
+//		JFrame frame = new JFrame();
+//		frame.setVisible(true);
+//		frame.setBounds(100, 100, 578, 256);
+//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		
+//		JLabel lblNewLabel = new JLabel("Please enter information about the pilot. Leave fields blank if you wish to view all pilots.");
+//		
+//		JLabel label = new JLabel("");
+//		
+//		JButton btnAdd = new JButton("Add");
+//		
+//		JButton btnEdit = new JButton("Edit");
+//		
+//		JButton btnView = new JButton("View");
+//		
+//		JButton btnDelete = new JButton("Delete");
+//		
+//		JButton btnCloseWindow = new JButton("Close Window");
+//		
+//		JLabel idLabel = new JLabel("Plane ID");
+//		
+//		JTextField idField = new JTextField();
+//		idField.setColumns(10);
+//		
+//		JLabel ageLabel = new JLabel("Plane Age");
+//		
+//		JTextField  ageField = new JTextField();
+//		ageField.setColumns(10);
+//		
+//		JCheckBox olderBox = new JCheckBox("Older Than");
+//		
+//		JCheckBox youngerBox = new JCheckBox("Younger Than");
+//		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
+//		groupLayout.setHorizontalGroup(
+//			groupLayout.createParallelGroup(Alignment.LEADING)
+//				.addGroup(groupLayout.createSequentialGroup()
+//					.addContainerGap()
+//					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+//						.addComponent(label)
+//						.addComponent(lblNewLabel)
+//						.addGroup(groupLayout.createSequentialGroup()
+//							.addComponent(idLabel)
+//							.addGap(18)
+//							.addComponent(idField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+//						.addGroup(groupLayout.createSequentialGroup()
+//							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+//								.addGroup(groupLayout.createSequentialGroup()
+//									.addComponent(ageLabel)
+//									.addPreferredGap(ComponentPlacement.UNRELATED)
+//									.addComponent(ageField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+//								.addGroup(groupLayout.createSequentialGroup()
+//									.addComponent(btnAdd)
+//									.addGap(34)
+//									.addComponent(btnEdit)))
+//							.addGap(33)
+//							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+//								.addComponent(olderBox)
+//								.addComponent(btnView))
+//							.addGap(18)
+//							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+//								.addGroup(groupLayout.createSequentialGroup()
+//									.addComponent(btnDelete)
+//									.addGap(46)
+//									.addComponent(btnCloseWindow))
+//								.addComponent(youngerBox))))
+//					.addContainerGap(68, Short.MAX_VALUE))
+//		);
+//		groupLayout.setVerticalGroup(
+//			groupLayout.createParallelGroup(Alignment.LEADING)
+//				.addGroup(groupLayout.createSequentialGroup()
+//					.addContainerGap()
+//					.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
+//					.addGap(18)
+//					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+//						.addComponent(idLabel)
+//						.addComponent(idField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+//					.addGap(18)
+//					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+//						.addComponent(ageLabel)
+//						.addComponent(ageField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+//						.addComponent(olderBox)
+//						.addComponent(youngerBox))
+//					.addGap(50)
+//					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+//						.addComponent(btnAdd)
+//						.addComponent(btnEdit)
+//						.addComponent(btnView)
+//						.addComponent(btnDelete)
+//						.addComponent(btnCloseWindow))
+//					.addGap(51)
+//					.addComponent(label)
+//					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+//		);
+//		frame.getContentPane().setLayout(groupLayout);
+//		
+//	}
+//	
+//	
+//	public static void adminFlights()
+//	{
+//		JFrame frame = new JFrame();
+//		frame.setVisible(true);
+//		frame.setBounds(100, 100, 578, 271);
+//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		
+//		JLabel lblNewLabel = new JLabel("Please enter information about the pilot. Leave fields blank if you wish to view all pilots.");
+//		
+//		JLabel label = new JLabel("");
+//		
+//		JButton btnAdd = new JButton("Add");
+//		
+//		JButton btnEdit = new JButton("Edit");
+//		
+//		JButton btnView = new JButton("View");
+//		
+//		JButton btnDelete = new JButton("Delete");
+//		
+//		JButton btnCloseWindow = new JButton("Close Window");
+//		
+//		JLabel flightLabel = new JLabel("Flight ID");
+//		
+//		JTextField flightField = new JTextField();
+//		flightField.setColumns(10);
+//		
+//		JLabel destLabel = new JLabel("Destination");
+//		
+//		JTextField destField = new JTextField();
+//		destField.setColumns(10);
+//		
+//		JLabel depDateLabel = new JLabel("Departure Date");
+//		
+//		JTextField depDateField = new JTextField();
+//		depDateField.setColumns(10);
+//		
+//		JLabel depTimeLabel = new JLabel("Departure Time");
+//		
+//		JTextField depTimeField = new JTextField();
+//		depTimeField.setColumns(10);
+//		
+//		JLabel planeLabel = new JLabel("Plane ID");
+//		
+//		JTextField planeField = new JTextField();
+//		planeField.setColumns(10);
+//		
+//		JLabel gateLabel = new JLabel("Gate ID");
+//		
+//		JTextField gateField = new JTextField();
+//		gateField.setColumns(10);
+//		
+//		JLabel pilotLabel = new JLabel("PilotID");
+//		
+//		JTextField pilotField = new JTextField();
+//		pilotField.setColumns(10);
+//		
+//		JCheckBox befDateBox = new JCheckBox("Before");
+//		
+//		JCheckBox afDateBox = new JCheckBox("After");
+//		
+//		JCheckBox befTimeBox = new JCheckBox("Before");
+//		
+//		JCheckBox afTimeBox = new JCheckBox("After");
+//		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
+//		groupLayout.setHorizontalGroup(
+//			groupLayout.createParallelGroup(Alignment.LEADING)
+//				.addGroup(groupLayout.createSequentialGroup()
+//					.addContainerGap()
+//					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+//						.addComponent(label)
+//						.addComponent(lblNewLabel)
+//						.addGroup(groupLayout.createSequentialGroup()
+//							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+//								.addGroup(groupLayout.createSequentialGroup()
+//									.addComponent(btnAdd)
+//									.addGap(34)
+//									.addComponent(btnEdit))
+//								.addGroup(groupLayout.createSequentialGroup()
+//									.addComponent(flightLabel)
+//									.addPreferredGap(ComponentPlacement.UNRELATED)
+//									.addComponent(flightField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+//							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+//								.addGroup(groupLayout.createSequentialGroup()
+//									.addGap(33)
+//									.addComponent(btnView)
+//									.addGap(42)
+//									.addComponent(btnDelete)
+//									.addGap(46)
+//									.addComponent(btnCloseWindow))
+//								.addGroup(groupLayout.createSequentialGroup()
+//									.addGap(10)
+//									.addComponent(planeLabel)
+//									.addPreferredGap(ComponentPlacement.RELATED)
+//									.addComponent(planeField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+//									.addGap(10)
+//									.addComponent(gateLabel)
+//									.addPreferredGap(ComponentPlacement.RELATED)
+//									.addComponent(gateField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+//									.addPreferredGap(ComponentPlacement.UNRELATED)
+//									.addComponent(pilotLabel)
+//									.addPreferredGap(ComponentPlacement.RELATED)
+//									.addComponent(pilotField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))))
+//						.addGroup(groupLayout.createSequentialGroup()
+//							.addComponent(depDateLabel)
+//							.addPreferredGap(ComponentPlacement.RELATED)
+//							.addComponent(depDateField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+//							.addPreferredGap(ComponentPlacement.UNRELATED)
+//							.addComponent(befDateBox)
+//							.addPreferredGap(ComponentPlacement.UNRELATED)
+//							.addComponent(afDateBox))
+//						.addGroup(groupLayout.createSequentialGroup()
+//							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+//								.addComponent(depTimeLabel)
+//								.addComponent(destLabel))
+//							.addPreferredGap(ComponentPlacement.RELATED)
+//							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+//								.addComponent(destField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+//								.addComponent(depTimeField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+//							.addPreferredGap(ComponentPlacement.UNRELATED)
+//							.addComponent(befTimeBox)
+//							.addGap(4)
+//							.addComponent(afTimeBox)))
+//					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+//		);
+//		groupLayout.setVerticalGroup(
+//			groupLayout.createParallelGroup(Alignment.LEADING)
+//				.addGroup(groupLayout.createSequentialGroup()
+//					.addContainerGap()
+//					.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
+//					.addGap(18)
+//					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+//						.addComponent(flightLabel)
+//						.addComponent(flightField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+//						.addComponent(planeLabel)
+//						.addComponent(planeField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+//						.addComponent(gateField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+//						.addComponent(gateLabel)
+//						.addComponent(pilotLabel)
+//						.addComponent(pilotField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+//					.addPreferredGap(ComponentPlacement.UNRELATED)
+//					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+//						.addComponent(depDateLabel)
+//						.addComponent(depDateField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+//						.addComponent(befDateBox)
+//						.addComponent(afDateBox))
+//					.addPreferredGap(ComponentPlacement.UNRELATED)
+//					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+//						.addComponent(depTimeLabel)
+//						.addComponent(depTimeField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+//						.addComponent(afTimeBox)
+//						.addComponent(befTimeBox))
+//					.addPreferredGap(ComponentPlacement.UNRELATED)
+//					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+//						.addComponent(destLabel)
+//						.addComponent(destField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+//					.addGap(21)
+//					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+//						.addComponent(btnAdd)
+//						.addComponent(btnEdit)
+//						.addComponent(btnView)
+//						.addComponent(btnDelete)
+//						.addComponent(btnCloseWindow))
+//					.addGap(51)
+//					.addComponent(label)
+//					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+//		);
+//		frame.getContentPane().setLayout(groupLayout);
+//	}
+//	
+//	public static void adminPassengers()
+//	{
+//	
+//		JFrame frame = new JFrame();
+//		frame.setVisible(true);
+//		frame.setBounds(100, 100, 578, 271);
+//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		
+//		JLabel lblNewLabel = new JLabel("Please enter information about the pilot. Leave fields blank if you wish to view all pilots.");
+//		
+//		JLabel label = new JLabel("");
+//		
+//		JButton btnAdd = new JButton("Add");
+//		
+//		JButton btnEdit = new JButton("Edit");
+//		
+//		JButton btnView = new JButton("View");
+//		
+//		JButton btnDelete = new JButton("Delete");
+//		
+//		JButton btnCloseWindow = new JButton("Close Window");
+//		
+//		JLabel nameLabel = new JLabel("Name");
+//		
+//		JTextField nameField = new JTextField();
+//		nameField.setColumns(10);
+//		
+//		JLabel ageLabel = new JLabel("Age");
+//		
+//		JTextField ageField = new JTextField();
+//		ageField.setColumns(10);
+//		
+//		JLabel flightLabel = new JLabel("Flight ID");
+//		
+//		JTextField flightField = new JTextField();
+//		flightField.setColumns(10);
+//		
+//		JLabel seatLabel = new JLabel("Seat ID");
+//		
+//		JTextField seatField = new JTextField();
+//		seatField.setColumns(10);
+//		
+//		JCheckBox firstClassBox = new JCheckBox("First Class");
+//		
+//		JLabel passLabel = new JLabel("Passenger ID");
+//		
+//		JTextField pasField = new JTextField();
+//		pasField.setColumns(10);
+//		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
+//		groupLayout.setHorizontalGroup(
+//			groupLayout.createParallelGroup(Alignment.LEADING)
+//				.addGroup(groupLayout.createSequentialGroup()
+//					.addContainerGap()
+//					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+//						.addComponent(label)
+//						.addComponent(lblNewLabel)
+//						.addGroup(groupLayout.createSequentialGroup()
+//							.addComponent(flightLabel)
+//							.addPreferredGap(ComponentPlacement.RELATED)
+//							.addComponent(flightField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+//						.addGroup(groupLayout.createSequentialGroup()
+//							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+//								.addGroup(groupLayout.createSequentialGroup()
+//									.addComponent(btnAdd)
+//									.addGap(34)
+//									.addComponent(btnEdit))
+//								.addGroup(groupLayout.createSequentialGroup()
+//									.addComponent(nameLabel)
+//									.addPreferredGap(ComponentPlacement.RELATED)
+//									.addComponent(nameField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+//								.addGroup(groupLayout.createSequentialGroup()
+//									.addComponent(ageLabel)
+//									.addPreferredGap(ComponentPlacement.UNRELATED)
+//									.addComponent(ageField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+//							.addGap(33)
+//							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+//								.addGroup(groupLayout.createSequentialGroup()
+//									.addComponent(passLabel)
+//									.addPreferredGap(ComponentPlacement.RELATED)
+//									.addComponent(pasField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+//								.addGroup(groupLayout.createSequentialGroup()
+//									.addComponent(seatLabel)
+//									.addPreferredGap(ComponentPlacement.UNRELATED)
+//									.addComponent(seatField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+//									.addGap(18)
+//									.addComponent(firstClassBox))
+//								.addGroup(groupLayout.createSequentialGroup()
+//									.addComponent(btnView)
+//									.addGap(42)
+//									.addComponent(btnDelete)
+//									.addGap(46)
+//									.addComponent(btnCloseWindow)))))
+//					.addContainerGap(78, Short.MAX_VALUE))
+//		);
+//		groupLayout.setVerticalGroup(
+//			groupLayout.createParallelGroup(Alignment.LEADING)
+//				.addGroup(groupLayout.createSequentialGroup()
+//					.addContainerGap()
+//					.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
+//					.addGap(18)
+//					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+//						.addComponent(nameLabel)
+//						.addComponent(nameField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+//						.addComponent(seatLabel)
+//						.addComponent(seatField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+//						.addComponent(firstClassBox))
+//					.addPreferredGap(ComponentPlacement.UNRELATED)
+//					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+//						.addComponent(ageLabel)
+//						.addComponent(ageField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+//						.addComponent(passLabel)
+//						.addComponent(pasField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+//					.addPreferredGap(ComponentPlacement.UNRELATED)
+//					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+//						.addComponent(flightLabel)
+//						.addComponent(flightField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+//					.addGap(55)
+//					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+//						.addComponent(btnAdd)
+//						.addComponent(btnEdit)
+//						.addComponent(btnView)
+//						.addComponent(btnDelete)
+//						.addComponent(btnCloseWindow))
+//					.addGap(51)
+//					.addComponent(label)
+//					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+//		);
+//		frame.getContentPane().setLayout(groupLayout);
+//		
+//	}
+//	
+//	public static void adminSeats(){
+//		
+//		JFrame frame = new JFrame();
+//		frame.setVisible(true);
+//		frame.setBounds(100, 100, 578, 256);
+//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		
+//		JLabel lblNewLabel = new JLabel("Please enter information about the seat. Leave fields blank if you wish to view all seatss.");
+//		
+//		JLabel label = new JLabel("");
+//		
+//		JLabel lblSeatId = new JLabel("Seat ID");
+//		
+//		JTextField seatField = new JTextField();
+//		
+//		
+//		
+//		seatField.setColumns(10);
+//		
+//		JLabel rowLabel = new JLabel("Row");
+//		
+//		JTextField rowField = new JTextField();
+//		rowField.setColumns(10);
+//		
+//		JLabel seatNoLabel = new JLabel("Seat Number");
+//		
+//		JTextField seatNoField = new JTextField();
+//		seatNoField.setColumns(10);
+//		
+//		JLabel planeIDLabel = new JLabel("Plane ID");
+//		
+//		JTextField planeIDField = new JTextField();
+//		planeIDField.setColumns(10);
+//		
+//		JCheckBox takenBox = new JCheckBox("Taken");
+//		
+//		JButton btnAdd = new JButton("Add");
+//		
+//		JButton btnEdit = new JButton("Edit");
+//		
+//		JButton btnView = new JButton("View");
+//		
+//		JButton btnDelete = new JButton("Delete");
+//		
+//		JButton btnCloseWindow = new JButton("Close Window");
+//		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
+//		groupLayout.setHorizontalGroup(
+//			groupLayout.createParallelGroup(Alignment.LEADING)
+//				.addGroup(groupLayout.createSequentialGroup()
+//					.addContainerGap()
+//					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+//						.addComponent(lblSeatId)
+//						.addComponent(rowLabel))
+//					.addContainerGap(516, Short.MAX_VALUE))
+//				.addGroup(groupLayout.createSequentialGroup()
+//					.addContainerGap()
+//					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+//						.addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
+//							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+//								.addComponent(label)
+//								.addComponent(lblNewLabel))
+//							.addGap(66))
+//						.addGroup(groupLayout.createSequentialGroup()
+//							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+//								.addComponent(seatNoLabel)
+//								.addComponent(planeIDLabel))
+//							.addGap(18)
+//							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+//								.addComponent(seatField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+//								.addComponent(planeIDField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+//								.addGroup(groupLayout.createSequentialGroup()
+//									.addComponent(seatNoField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+//									.addGap(18)
+//									.addComponent(takenBox))
+//								.addComponent(rowField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+//							.addPreferredGap(ComponentPlacement.RELATED, 150, Short.MAX_VALUE)
+//							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+//								.addComponent(btnAdd)
+//								.addComponent(btnEdit)
+//								.addComponent(btnView)
+//								.addComponent(btnDelete)
+//								.addComponent(btnCloseWindow))
+//							.addContainerGap(58, Short.MAX_VALUE))))
+//		);
+//		groupLayout.setVerticalGroup(
+//			groupLayout.createParallelGroup(Alignment.LEADING)
+//				.addGroup(groupLayout.createSequentialGroup()
+//					.addContainerGap()
+//					.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
+//					.addGap(26)
+//					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+//						.addComponent(lblSeatId)
+//						.addComponent(seatField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+//						.addComponent(btnAdd))
+//					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+//						.addGroup(groupLayout.createSequentialGroup()
+//							.addPreferredGap(ComponentPlacement.UNRELATED)
+//							.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+//								.addComponent(rowLabel)
+//								.addComponent(rowField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+//							.addGap(18)
+//							.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+//								.addComponent(seatNoLabel)
+//								.addComponent(seatNoField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+//								.addComponent(takenBox))
+//							.addPreferredGap(ComponentPlacement.UNRELATED)
+//							.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+//								.addComponent(planeIDLabel)
+//								.addComponent(planeIDField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+//							.addGap(19)
+//							.addComponent(label))
+//						.addGroup(groupLayout.createSequentialGroup()
+//							.addGap(6)
+//							.addComponent(btnEdit)
+//							.addPreferredGap(ComponentPlacement.RELATED)
+//							.addComponent(btnView)
+//							.addPreferredGap(ComponentPlacement.RELATED)
+//							.addComponent(btnDelete)
+//							.addPreferredGap(ComponentPlacement.RELATED)
+//							.addComponent(btnCloseWindow)))
+//					.addContainerGap(11, Short.MAX_VALUE))
+//		);
+//		frame.getContentPane().setLayout(groupLayout);
+//	}
+//	
+//	
+//	
+//	
 	/**
 	 * getFlights
 	 * 
