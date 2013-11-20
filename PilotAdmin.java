@@ -34,7 +34,7 @@ public class PilotAdmin extends Admin{
 	 */
 	public void admin(){
 		
-		final JFrame frame = new JFrame();
+		final JFrame frame = new JFrame("Admin - Pilot");
 		frame.setVisible(true);
 		frame.setBounds(200, 200, 578, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -311,12 +311,17 @@ public class PilotAdmin extends Admin{
 			{
                                 int row = e.getFirstRow();
                                 int column = e.getColumn();
-                                TableModel model = (TableModel)e.getSource();
-                                String columnName = model.getColumnName(column);
-                                Object data = model.getValueAt(row, column);
-                                int pilotID = (int) table.getValueAt(row, 1);
-				if(column != 1)
-                                    editPilot(columnName, data, pilotID);
+                                if(column == 1)
+                                        JOptionPane.showMessageDialog(frame, "Cannot change pilotID");
+                                else
+                                {
+                                        TableModel model = (TableModel)e.getSource();                                
+                                        String columnName = model.getColumnName(column);
+                                        Object data = model.getValueAt(row, column);
+                                        int pilotID = (int) table.getValueAt(row, 1);				
+                                        editPilot(columnName, data, pilotID);
+                                }
+                                        
 				
 			}
 		});
