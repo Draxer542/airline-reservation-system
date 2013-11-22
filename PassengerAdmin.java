@@ -213,6 +213,8 @@ public class PassengerAdmin extends Admin{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
                 }
+                if(name.equals("") || age.equals("") || flightID.equals("") || seatID.equals("") || pasID.equals(""))
+                    return false;
                 sql = "INSERT INTO Passenger(name, age, flightID, firstClass, seatID, pasID) "
                                                 + "VALUES(\""
                                                 + name
