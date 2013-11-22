@@ -9,7 +9,7 @@ Big ToDo
 3). Transaction
 4). Archiving
 5). Add functionality to admin - flights
-6). Add functionality to admin - seats (Luong will take care of it)
+
 
 Little ToDo
 -----------
@@ -30,3 +30,4 @@ Completed
 8). (DONE - Arjay) Add functionality to admin - planes
 9). (DONE - Arjay) Increase program efficiency
 10) (DONE - Luong) Add functionality to admin - passengers
+11) (DONE - Luong) Add functionality to admin - seats
