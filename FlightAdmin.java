@@ -1,11 +1,24 @@
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.TableModel;
 
 
 public class FlightAdmin extends Admin{
@@ -19,7 +32,7 @@ public class FlightAdmin extends Admin{
 	
 	public void admin()
 	{
-		JFrame frame = new JFrame();
+		final JFrame frame = new JFrame();
 		frame.setVisible(true);
 		frame.setBounds(100, 100, 578, 271);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -38,39 +51,45 @@ public class FlightAdmin extends Admin{
 		
 		JButton btnCloseWindow = new JButton("Close Window");
 		
+		btnCloseWindow.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent ae){
+				frame.dispose();
+			}
+		});
+		
 		JLabel flightLabel = new JLabel("Flight ID");
 		
-		JTextField flightField = new JTextField();
+		final JTextField flightField = new JTextField();
 		flightField.setColumns(10);
 		
 		JLabel destLabel = new JLabel("Destination");
 		
-		JTextField destField = new JTextField();
+		final JTextField destField = new JTextField();
 		destField.setColumns(10);
 		
 		JLabel depDateLabel = new JLabel("Departure Date");
 		
-		JTextField depDateField = new JTextField();
+		final JTextField depDateField = new JTextField();
 		depDateField.setColumns(10);
 		
 		JLabel depTimeLabel = new JLabel("Departure Time");
 		
-		JTextField depTimeField = new JTextField();
+		final JTextField depTimeField = new JTextField();
 		depTimeField.setColumns(10);
 		
 		JLabel planeLabel = new JLabel("Plane ID");
 		
-		JTextField planeField = new JTextField();
+		final JTextField planeField = new JTextField();
 		planeField.setColumns(10);
 		
 		JLabel gateLabel = new JLabel("Gate ID");
 		
-		JTextField gateField = new JTextField();
+		final JTextField gateField = new JTextField();
 		gateField.setColumns(10);
 		
 		JLabel pilotLabel = new JLabel("PilotID");
 		
-		JTextField pilotField = new JTextField();
+		final JTextField pilotField = new JTextField();
 		pilotField.setColumns(10);
 		
 		JCheckBox befDateBox = new JCheckBox("Before");
@@ -80,6 +99,38 @@ public class FlightAdmin extends Admin{
 		JCheckBox befTimeBox = new JCheckBox("Before");
 		
 		JCheckBox afTimeBox = new JCheckBox("After");
+		
+		btnDelete.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				try {
+					if(deleteFlight(flightField.getText()))
+						JOptionPane.showMessageDialog(frame, "Flight " + flightField.getText() +" has been deleted from the database.");
+					else
+						JOptionPane.showMessageDialog(frame, "Please enter a Flight ID that exists in the database!");
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		
+		btnAdd.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				if(!addFlight(flightField.getText(), destField.getText(), depDateField.getText(), depTimeField.getText(), planeField.getText(),
+						pilotField.getText(), gateField.getText()))
+						JOptionPane.showMessageDialog(frame, "Please enter an unused flightID, make sure your date field is in the form YYYY-MM-DD and "
+								+"your time is in the form HH:MM:SS!");
+				else
+					JOptionPane.showMessageDialog(frame, "Flight " + flightField.getText() + " has been added to database.");
+			}
+		});
+		
+		btnView.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				viewFlights(flightField.getText(), destField.getText(), depDateField.getText(), depTimeField.getText(), planeField.getText(),
+						pilotField.getText(), gateField.getText(), 1, 1);
+			}
+		});
 		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
@@ -184,5 +235,199 @@ public class FlightAdmin extends Admin{
 					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 		);
 		frame.getContentPane().setLayout(groupLayout);
+	}
+	
+	public boolean deleteFlight(String id) throws SQLException {
+		if (id.equals(""))
+			return false;
+		ResultSet rs;
+
+		// default sql statement(if no attributes are specified
+		String sql = "SELECT * FROM Flight WHERE flightID = " + id + "";
+		rs = connect.execute(sql);
+		
+		if (!rs.next()) {
+			return false;
+		}
+
+		if (id.compareTo("") != 0)
+			sql = "DELETE FROM Flight WHERE flightID = \'" + id + "\'";
+
+		try {
+			System.out.println(sql);
+			connect.executeUpdate(sql);
+			return true;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	public boolean addFlight(String flightID, String destination, String depDate, String depTime, String planeID
+			, String pilotID, String gateID) {
+		
+		String sql = "INSERT INTO Flight VALUES(" + flightID + ", \"" + destination + "\", \'" + depDate + "\', \'" + depTime + "\', " + planeID + ", " +
+				pilotID + ", \"" + gateID + "\")";
+		System.out.println(sql);
+		if (flightID.equals("") || destination.equals("") || depDate.equals("") || depTime.equals("") || planeID.equals("") 
+				|| pilotID.equals("") || gateID.equals(""))
+			return false;
+		
+		 sql = "INSERT INTO Flight VALUES(" + flightID + ", \"" + destination + "\", \'" + depDate + "\', \'" + depTime + "\', " + planeID + ", " +
+						pilotID + ", \"" + gateID + "\")";
+		
+		String sqlCheck = "SELECT * FROM Flight WHERE flightID = " + flightID;
+		System.out.println(sqlCheck);
+		ResultSet rs;
+		rs = connect.execute("SELECT * FROM Flight WHERE flightID = " + flightID);
+		
+		try {
+			if(AirlineReservationSystem.getRowNum(rs) == 0)
+			{
+				
+					connect.executeUpdate(sql);
+					return true;
+				
+					
+				
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}// addPilot
+
+	public void viewFlights(String flightID, String destination, String depDate, String depTime, String planeID
+			, String pilotID, String gateID, int compareDate, int compareTime) {
+
+		ResultSet rs;
+
+		// default sql statement(if no attributes are specified
+		String sql = "SELECT * FROM Flight";
+
+		// if any attribute is specified, append WHERE to sql
+		if (flightID.compareTo("") + destination.compareTo("") + depDate.compareTo("") + depTime.compareTo("") + 
+				planeID.compareTo("") + pilotID.compareTo("") + gateID.compareTo("") != 0) {
+			sql = sql + " WHERE ";
+			
+			if(flightID.compareTo("") != 0)
+				sql = sql + "flightID = " + flightID + " ";
+			else if(destination.compareTo("") != 0)
+				sql += "destination = \"" + destination + "\" ";
+			else if(depDate.compareTo("") != 0)
+				sql += "depDate = \'" + depDate + "\'";
+			else if(depTime.compareTo("") != 0)
+				sql += "depTime = \'" + depTime + "\'";
+			else if(planeID.compareTo("") != 0)
+				sql += "planeID = " + planeID;
+			else if(pilotID.compareTo("") != 0)
+				sql += "pilotID = " + pilotID;
+			else if(gateID.compareTo("") != 0)
+				sql += "gateID = \"" + gateID + "\"";
+
+		}
+
+		// CHECK, DELETE WHEN DONE
+		System.out.println(sql);
+		rs = connect.execute(sql);
+		
+		// Create frame
+		final JFrame frame = new JFrame();
+		frame.setBounds(400, 100, 500, 500);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setVisible(true);
+		JPanel panel = new JPanel();
+		frame.add(panel);
+
+		// get number of rows
+		int rowNum = AirlineReservationSystem.getRowNum(rs);
+
+		// fill Object[][] array with values
+		int i = 0;
+		Object[][] data = new Object[rowNum][7];
+		try {
+			while (rs.next()) {
+
+				data[i][0] = rs.getString("flightID");
+				data[i][1] = rs.getString("destination");
+				data[i][2] = rs.getDate("depDate");
+				data[i][3] = rs.getTime("depTime");
+				data[i][4] = rs.getInt("planeID");
+				data[i][5] = rs.getInt("pilotID");
+				data[i][6] = rs.getString("gateID");
+
+				i++;
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		// header table
+		String columnNames[] = { "FlightID", "Destination", "DepDate", "DepTime", "PlaneID", "PilotID", "GateID" };
+
+		// fill table
+		final JTable table = new JTable(data, columnNames);
+		table.setPreferredScrollableViewportSize(new Dimension(450, 300));
+		table.setFillsViewportHeight(true);
+		JScrollPane scrollPane = new JScrollPane(table);
+		JLabel text = new JLabel("Edit database except for PilotID");
+		panel.add(text);
+		panel.add(scrollPane);
+
+		// tablemodellisten for editing database
+		table.getModel().addTableModelListener(new TableModelListener() {
+			public void tableChanged(TableModelEvent e) {
+				int row = e.getFirstRow();
+				int column = e.getColumn();
+				TableModel model = (TableModel) e.getSource();
+				String columnName = model.getColumnName(column);
+				Object data = model.getValueAt(row, column);
+				String flightID = (String) table.getValueAt(row, 0);
+				if (column != 1)
+					;
+				if(column < 2 || column == 6)
+					editFlight(columnName, data, flightID, 0);
+				else if(column == 0 || (column > 3 && column < 5))
+					editFlight(columnName, data, flightID, 1);
+				else
+					editFlight(columnName, data, flightID, 2);
+
+			}
+		});
+		
+		JButton closeButton = new JButton("Close");
+		closeButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.dispose();
+			}
+		});
+		panel.add(closeButton);
+
+	}// viewPilots
+
+	public void editFlight(String columnName, Object data, String flightID, int type) {
+		String sql = "";
+		if(type == 0)
+		sql = "UPDATE Flight SET " + columnName + " = \"" + data
+				+ "\" WHERE flightID = " + flightID;
+		
+		else if(type == 1)
+			sql = "UPDATE Flight SET " + columnName + " = " + data
+			+ " WHERE flightID = " + flightID;
+		else
+			sql = "UPDATE Flight SET " + columnName + " = \'" + data
+			+ "\' WHERE flightID = " + flightID;
+		System.out.println(data.getClass());
+		System.out.println(sql);
+		try {
+			connect.executeUpdate(sql);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
