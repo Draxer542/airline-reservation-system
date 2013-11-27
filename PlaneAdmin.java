@@ -304,7 +304,7 @@ public void admin(){
                 table.setPreferredScrollableViewportSize(new Dimension(450, 300));
                 table.setFillsViewportHeight(true);
                 JScrollPane scrollPane = new JScrollPane(table);
-                JLabel text = new JLabel("Edit database except for PilotID");
+                JLabel text = new JLabel("Edit database except for PlaneID");
                 panel.add(text);
                 panel.add(scrollPane);
 

@@ -30,6 +30,8 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 
+import com.mysql.jdbc.MysqlDataTruncation;
+
 
 public class FlightAdmin extends Admin{
 
@@ -371,10 +373,15 @@ public class FlightAdmin extends Admin{
                                         
                                 
                         }
-                } catch (SQLException e) {
+                } 
+                catch(MysqlDataTruncation e)
+                {
+                	JOptionPane.showMessageDialog(new JFrame(), "Incorrect format. Date(YYYY-MM-DD), Time(HH:MM:SS)");
+                }catch (SQLException e) {
                         // TODO Auto-generated catch block
-                        e.printStackTrace();
+                	JOptionPane.showMessageDialog(new JFrame(), "Incorrect format. Date(YYYY-MM-DD), Time(HH:MM:SS)");
                 }
+                
                 return false;
         }// addPilot
 
@@ -474,7 +481,7 @@ public class FlightAdmin extends Admin{
                 table.getColumnModel().getColumn(1).setPreferredWidth(120);
                 table.getColumnModel().getColumn(7).setPreferredWidth(150);
                 JScrollPane scrollPane = new JScrollPane(table);
-                JLabel text = new JLabel("Edit database except for PilotID");
+                JLabel text = new JLabel("Edit database except for FlightID");
                 panel.add(text);
                 panel.add(scrollPane);
 
@@ -488,7 +495,7 @@ public class FlightAdmin extends Admin{
                                 Object data = model.getValueAt(row, column);
                                 String flightID = (String) table.getValueAt(row, 0);
                                 if (column != 1)
-                                        ;
+                                	JOptionPane.showMessageDialog(new JFrame(), "Cannot change flightID");
                                 if(column < 2 || column == 6)
                                         editFlight(columnName, data, flightID, 0);
                                 else if(column == 0 || (column > 3 && column < 5))

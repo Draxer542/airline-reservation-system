@@ -32,6 +32,7 @@ CREATE TABLE `flight` (
   `planeID` int(11) DEFAULT NULL,
   `pilotID` int(11) DEFAULT NULL,
   `gateID` char(4) DEFAULT NULL,
+  `updatedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`flightID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -42,7 +43,7 @@ CREATE TABLE `flight` (
 
 LOCK TABLES `flight` WRITE;
 /*!40000 ALTER TABLE `flight` DISABLE KEYS */;
-INSERT INTO `flight` VALUES (101,'Tokyo, Japan','2013-12-25','01:20:00',1234,10,'A001'),(102,'Manilla, Philippines','2013-11-02','13:00:00',1867,11,'A002'),(103,'New Dehli, India','2013-11-25','13:30:00',2685,1,'A003'),(104,'Zurich, Switzerland','2013-11-06','01:45:00',3212,2,'A004'),(105,'Taipei, Taiwan','2013-12-07','06:50:00',4325,3,'A002'),(106,'Seoul, Korea','2014-01-02','09:15:00',5432,4,'A001'),(107,'Taipei, Taiwan','2014-01-19','16:10:00',6987,5,'A004'),(108,'New Delhi, India','2013-12-20','15:00:00',7234,6,'A003');
+INSERT INTO `flight` VALUES (101,'Tokyo, Japan','2013-12-25','01:20:00',1234,10,'A001','2013-11-26 23:22:02'),(102,'Manilla, Philippines','2013-11-02','13:00:00',1867,11,'A002','0000-01-01 00:00:00'),(103,'New Dehli, India','2013-11-25','13:30:00',2685,1,'A003','0000-01-01 00:00:00'),(104,'Zurich, Switzerland','2013-11-06','01:45:00',3212,2,'A004','0000-01-01 00:00:00'),(105,'Taipei, Taiwan','2013-12-07','06:50:00',4325,3,'A002','0000-01-01 00:00:00'),(106,'Seoul, Korea','2014-01-02','09:15:00',5432,4,'A001','0000-01-01 00:00:00'),(107,'Taipei, Taiwan','2014-01-19','16:10:00',6987,5,'A004','0000-01-01 00:00:00'),(108,'New Delhi, India','2013-12-20','15:00:00',7234,6,'A003','0000-01-01 00:00:00');
 /*!40000 ALTER TABLE `flight` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -55,4 +56,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-10-28 20:36:12
+-- Dump completed on 2013-11-26 23:39:27
