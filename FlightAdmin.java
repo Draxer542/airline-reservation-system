@@ -133,12 +133,7 @@ public class FlightAdmin extends Admin{
     		archiveField = new JTextField();
     		archiveField.setColumns(10);
     		    		
-                btnArchive.addActionListener(new ActionListener(){
-    			public void actionPerformed(ActionEvent ae)
-    			{
-                                
-    			}
-    		});
+
     		
     		btnDelete.addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent e){
@@ -194,6 +189,20 @@ public class FlightAdmin extends Admin{
                  }
          });
          
+		 
+		 btnArchive.addActionListener(new ActionListener(){
+        	 public void actionPerformed(ActionEvent ae)
+        	 {
+        		 String s = archiveField.getText();
+        		 try {
+					connect.executeArchive(s);
+					JOptionPane.showMessageDialog(frame, "Archived");
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					JOptionPane.showMessageDialog(frame, "Incorrect Date format, must be in form YYYY-MM-DD HH:MM:SS");
+				}
+        	 }
+         });
     		GroupLayout gl_contentPane = new GroupLayout(contentPane);
     		gl_contentPane.setHorizontalGroup(
     			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -444,7 +453,7 @@ public class FlightAdmin extends Admin{
                                 data[i][4] = rs.getInt("planeID");
                                 data[i][5] = rs.getInt("pilotID");
                                 data[i][6] = rs.getString("gateID");                                
-                                data[i][7] = rs.getTimestamp("updateAt");
+                                data[i][7] = rs.getTimestamp("updatedAt");
                                 
 
                                 i++;
@@ -505,14 +514,14 @@ public class FlightAdmin extends Admin{
                 DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 Calendar cal = Calendar.getInstance();
                 if(type == 0)
-                sql = "UPDATE Flight SET " + columnName + " = \"" + data + "\", updateAt = \'" + dateFormat.format(cal.getTime())  
+                sql = "UPDATE Flight SET " + columnName + " = \"" + data + "\", updatedAt = \'" + dateFormat.format(cal.getTime())  
                                 + "\' WHERE flightID = " + flightID;
                 
                 else if(type == 1)
-                        sql = "UPDATE Flight SET " + columnName + " = " + data + ", updateAt = \'" + dateFormat.format(cal.getTime())
+                        sql = "UPDATE Flight SET " + columnName + " = " + data + ", updatedAt = \'" + dateFormat.format(cal.getTime())
                         + "\' WHERE flightID = " + flightID;
                 else
-                        sql = "UPDATE Flight SET " + columnName + " = \'" + data + "\', updateAt = \'" + dateFormat.format(cal.getTime())
+                        sql = "UPDATE Flight SET " + columnName + " = \'" + data + "\', updatedAt = \'" + dateFormat.format(cal.getTime())
                         + "\' WHERE flightID = " + flightID;
                 System.out.println(data.getClass());
                 System.out.println(sql);

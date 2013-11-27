@@ -1,4 +1,5 @@
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -51,6 +52,14 @@ public class DatabaseConnection {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public void executeArchive(String date) throws SQLException
+	{
+				
+		CallableStatement cs = conn.prepareCall("{call archive_history(?)}");
+		cs.setString(1,date);
+		cs.executeUpdate();	
 	}
 
 	public void executeUpdate(String query) throws SQLException {
