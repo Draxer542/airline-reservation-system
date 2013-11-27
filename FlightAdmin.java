@@ -1,8 +1,17 @@
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -42,7 +51,7 @@ public class FlightAdmin extends Admin{
         	final JTextField destField;
         	final JTextField depDateField;
         	final JTextField depTimeField;
-        	final JTextField textField_7;
+        	final JTextField archiveField;
         	
         	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     		frame.setBounds(100, 100, 600, 300);
@@ -116,16 +125,20 @@ public class FlightAdmin extends Admin{
     		});
     		
     		JButton btnArchive = new JButton("Archive");
-    		
+    		                
     		JLabel lblToArchiveData = new JLabel("To archive data, enter a cut off date and click Archive");
     		
     		JLabel lblCutoffDateFor = new JLabel("Cutoff date for Archiving");
-    		
-    		
-    		
-    		textField_7 = new JTextField();
-    		textField_7.setColumns(10);
-    		
+    		    		
+    		archiveField = new JTextField();
+    		archiveField.setColumns(10);
+    		    		
+                btnArchive.addActionListener(new ActionListener(){
+    			public void actionPerformed(ActionEvent ae)
+    			{
+                                
+    			}
+    		});
     		
     		btnDelete.addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent e){
@@ -239,7 +252,7 @@ public class FlightAdmin extends Admin{
     						.addGroup(gl_contentPane.createSequentialGroup()
     							.addComponent(lblCutoffDateFor)
     							.addPreferredGap(ComponentPlacement.RELATED)
-    							.addComponent(textField_7, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+    							.addComponent(archiveField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
     					.addContainerGap(27, Short.MAX_VALUE))
     		);
     		gl_contentPane.setVerticalGroup(
@@ -280,7 +293,7 @@ public class FlightAdmin extends Admin{
     					.addPreferredGap(ComponentPlacement.UNRELATED)
     					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
     						.addComponent(lblCutoffDateFor)
-    						.addComponent(textField_7, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+    						.addComponent(archiveField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
     					.addPreferredGap(ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
     					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
     						.addComponent(btnAdd)
@@ -322,16 +335,17 @@ public class FlightAdmin extends Admin{
 
         public boolean addFlight(String flightID, String destination, String depDate, String depTime, String planeID
                         , String pilotID, String gateID) {
-                
+                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                Calendar cal = Calendar.getInstance();
                 String sql = "INSERT INTO Flight VALUES(" + flightID + ", \"" + destination + "\", \'" + depDate + "\', \'" + depTime + "\', " + planeID + ", " +
-                                pilotID + ", \"" + gateID + "\")";
+                                pilotID + ", \"" + gateID + "\", \'" + dateFormat.format(cal.getTime()) + "\')";
                 System.out.println(sql);
                 if (flightID.equals("") || destination.equals("") || depDate.equals("") || depTime.equals("") || planeID.equals("") 
                                 || pilotID.equals("") || gateID.equals(""))
                         return false;
-                
+                 
                  sql = "INSERT INTO Flight VALUES(" + flightID + ", \"" + destination + "\", \'" + depDate + "\', \'" + depTime + "\', " + planeID + ", " +
-                                                pilotID + ", \"" + gateID + "\")";
+                                                pilotID + ", \"" + gateID + "\", \'" + dateFormat.format(cal.getTime()) + "\')";
                 
                 String sqlCheck = "SELECT * FROM Flight WHERE flightID = " + flightID;
                 System.out.println(sqlCheck);
@@ -408,7 +422,7 @@ public class FlightAdmin extends Admin{
                 
                 // Create frame
                 final JFrame frame = new JFrame();
-                frame.setBounds(400, 100, 700, 500);
+                frame.setBounds(400, 100, 800, 500);
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 frame.setVisible(true);
                 JPanel panel = new JPanel();
@@ -419,7 +433,7 @@ public class FlightAdmin extends Admin{
 
                 // fill Object[][] array with values
                 int i = 0;
-                Object[][] data = new Object[rowNum][7];
+                Object[][] data = new Object[rowNum][8];
                 try {
                         while (rs.next()) {
 
@@ -429,7 +443,9 @@ public class FlightAdmin extends Admin{
                                 data[i][3] = rs.getTime("depTime");
                                 data[i][4] = rs.getInt("planeID");
                                 data[i][5] = rs.getInt("pilotID");
-                                data[i][6] = rs.getString("gateID");
+                                data[i][6] = rs.getString("gateID");                                
+                                data[i][7] = rs.getTimestamp("updateAt");
+                                
 
                                 i++;
                         }
@@ -440,13 +456,14 @@ public class FlightAdmin extends Admin{
                 }
 
                 // header table
-                String columnNames[] = { "FlightID", "Destination", "DepDate", "DepTime", "PlaneID", "PilotID", "GateID" };
+                String columnNames[] = { "flightID", "destination", "depDate", "depTime", "planeID", "pilotID", "gateID" , "updateAt"};
 
                 // fill table
                 final JTable table = new JTable(data, columnNames);
-                table.setPreferredScrollableViewportSize(new Dimension(650, 300));
+                table.setPreferredScrollableViewportSize(new Dimension(750, 300));
                 table.setFillsViewportHeight(true);
                 table.getColumnModel().getColumn(1).setPreferredWidth(120);
+                table.getColumnModel().getColumn(7).setPreferredWidth(150);
                 JScrollPane scrollPane = new JScrollPane(table);
                 JLabel text = new JLabel("Edit database except for PilotID");
                 panel.add(text);
@@ -485,15 +502,17 @@ public class FlightAdmin extends Admin{
 
         public void editFlight(String columnName, Object data, String flightID, int type) {
                 String sql = "";
+                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                Calendar cal = Calendar.getInstance();
                 if(type == 0)
-                sql = "UPDATE Flight SET " + columnName + " = \"" + data
-                                + "\" WHERE flightID = " + flightID;
+                sql = "UPDATE Flight SET " + columnName + " = \"" + data + "\", updateAt = \'" + dateFormat.format(cal.getTime())  
+                                + "\' WHERE flightID = " + flightID;
                 
                 else if(type == 1)
-                        sql = "UPDATE Flight SET " + columnName + " = " + data
-                        + " WHERE flightID = " + flightID;
+                        sql = "UPDATE Flight SET " + columnName + " = " + data + ", updateAt = \'" + dateFormat.format(cal.getTime())
+                        + "\' WHERE flightID = " + flightID;
                 else
-                        sql = "UPDATE Flight SET " + columnName + " = \'" + data
+                        sql = "UPDATE Flight SET " + columnName + " = \'" + data + "\', updateAt = \'" + dateFormat.format(cal.getTime())
                         + "\' WHERE flightID = " + flightID;
                 System.out.println(data.getClass());
                 System.out.println(sql);
@@ -504,4 +523,5 @@ public class FlightAdmin extends Admin{
                         e.printStackTrace();
                 }
         }
+        
 }
