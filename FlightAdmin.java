@@ -32,18 +32,20 @@ public class FlightAdmin extends Admin{
 	
 	public void admin()
 	{
-		final JFrame frame = new JFrame("Admin - Flight");
+		final JFrame frame = new JFrame();
 		frame.setVisible(true);
-		frame.setBounds(200, 200, 800, 300);
+		frame.setBounds(100, 100, 578, 271);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		JLabel lblNewLabel = new JLabel("Please enter information about the flight. Leave fields blank if you wish to view all flights.");
+		JLabel lblNewLabel = new JLabel("Please enter information about the pilot. Leave fields blank if you wish to view all pilots.");
 		
-		JLabel label = new JLabel("To delete a flight, enter flightID.");
+		JLabel label = new JLabel("");
 		
 		JButton btnAdd = new JButton("Add");
 		
-		JButton btnView = new JButton("View and Edit");
+		JButton btnEdit = new JButton("Edit");
+		
+		JButton btnView = new JButton("View");
 		
 		JButton btnDelete = new JButton("Delete");
 		
@@ -125,31 +127,21 @@ public class FlightAdmin extends Admin{
 		
 		btnView.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-                                if(!depDateField.getText().equals("") && befDateBox.isSelected() && afDateBox.isSelected())
-                                        JOptionPane.showMessageDialog(frame, "Please only pick either greater or less than!");
-                                else if(!depTimeField.getText().equals("") && befTimeBox.isSelected() && afTimeBox.isSelected())
-                                        JOptionPane.showMessageDialog(frame, "Please only pick either greater or less than!");
-                                else
-                                {
-                                        int compareDate;
-                                        int compareTime;
-                                        if(befDateBox.isSelected())
-                                                compareDate = -1;
-                                        else if(afDateBox.isSelected())
-                                                compareDate = 1;
-                                        else
-                                                compareDate = 0;
-                                        if(befTimeBox.isSelected())
-                                                compareTime = -1;
-                                        else if(afTimeBox.isSelected())
-                                                compareTime = 1;
-                                        else
-                                                compareTime = 0;
-                                        viewFlights(flightField.getText(), destField.getText(), depDateField.getText(), depTimeField.getText(), planeField.getText(),
-                                                        pilotField.getText(), gateField.getText(), compareDate, compareTime);
-			
-                                }
-                        }
+				int i = 0;
+				int j = 0;
+				
+				if (befDateBox.isSelected())
+					i = -1;
+				else if(afDateBox.isSelected())
+					i = 1;
+				
+				if(befTimeBox.isSelected())
+					j = -1;
+				else if(afTimeBox.isSelected())
+					j = 1;
+				viewFlights(flightField.getText(), destField.getText(), depDateField.getText(), depTimeField.getText(), planeField.getText(),
+						pilotField.getText(), gateField.getText(), i, j);
+			}
 		});
 		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
 		groupLayout.setHorizontalGroup(
@@ -159,13 +151,12 @@ public class FlightAdmin extends Admin{
 					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 						.addComponent(label)
 						.addComponent(lblNewLabel)
-                                                .addComponent(label)
 						.addGroup(groupLayout.createSequentialGroup()
 							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 								.addGroup(groupLayout.createSequentialGroup()
 									.addComponent(btnAdd)
 									.addGap(34)
-									.addComponent(btnView))
+									.addComponent(btnEdit))
 								.addGroup(groupLayout.createSequentialGroup()
 									.addComponent(flightLabel)
 									.addPreferredGap(ComponentPlacement.UNRELATED)
@@ -173,10 +164,11 @@ public class FlightAdmin extends Admin{
 							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 								.addGroup(groupLayout.createSequentialGroup()
 									.addGap(33)
-									.addComponent(btnDelete)
+									.addComponent(btnView)
 									.addGap(42)
-									.addComponent(btnCloseWindow)
-									.addGap(46))
+									.addComponent(btnDelete)
+									.addGap(46)
+									.addComponent(btnCloseWindow))
 								.addGroup(groupLayout.createSequentialGroup()
 									.addGap(10)
 									.addComponent(planeLabel)
@@ -217,8 +209,6 @@ public class FlightAdmin extends Admin{
 				.addGroup(groupLayout.createSequentialGroup()
 					.addContainerGap()
 					.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
-					
-                                        .addComponent(label, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
 					.addGap(18)
 					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
 						.addComponent(flightLabel)
@@ -248,6 +238,7 @@ public class FlightAdmin extends Admin{
 					.addGap(21)
 					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
 						.addComponent(btnAdd)
+						.addComponent(btnEdit)
 						.addComponent(btnView)
 						.addComponent(btnDelete)
 						.addComponent(btnCloseWindow))
@@ -334,27 +325,35 @@ public class FlightAdmin extends Admin{
 			sql = sql + " WHERE ";
 			
 			if(flightID.compareTo("") != 0)
-				sql = sql + "flightID = " + flightID + " ";
-			else if(destination.compareTo("") != 0)
-				sql += "destination = \"" + destination + "\" ";
-			else if(depDate.compareTo("") != 0 && compareDate == 0)
-				sql += "depDate = \'" + depDate + "\'";
-                        else if(depDate.compareTo("") != 0 && compareDate > 0)
-				sql += "depDate > \'" + depDate + "\'";
-                        else if(depDate.compareTo("") != 0 && compareDate < 0)
-				sql += "depDate < \'" + depDate + "\'";
-			else if(depTime.compareTo("") != 0 && compareTime == 0)
-				sql += "depTime = \'" + depTime + "\'";
-                        else if(depTime.compareTo("") != 0 && compareTime > 0)
-				sql += "depTime > \'" + depTime + "\'";
-                        else if(depTime.compareTo("") != 0 && compareTime < 0)
-				sql += "depTime < \'" + depTime + "\'";
-			else if(planeID.compareTo("") != 0)
-				sql += "planeID = " + planeID;
-			else if(pilotID.compareTo("") != 0)
-				sql += "pilotID = " + pilotID;
-			else if(gateID.compareTo("") != 0)
-				sql += "gateID = \"" + gateID + "\"";
+				sql = sql + "flightID = " + flightID + " AND ";
+			
+			if(destination.compareTo("") != 0)
+				sql += "destination = \"" + destination + "\" AND ";
+			
+			if(depDate.compareTo("") != 0 && compareDate == 0)
+				sql += "depDate = \'" + depDate + "\' AND ";
+			else if(compareDate > 0)
+				sql += "depDate >" + "\'" + depDate + "\' AND ";
+			else if(compareDate<0)
+				sql+= "depDate <" + "\'" + depDate + "\' AND ";
+			
+			if(depTime.compareTo("") != 0 && compareTime == 0)
+				sql += "depTime = \'" + depTime + "\' AND ";
+			else if(compareTime>0)
+				sql += "depTime > \'" + depTime + "\' AND ";
+			else if(compareTime<0)
+				sql += "depTime < \'" + depTime + "\' AND ";
+			
+			if(planeID.compareTo("") != 0)
+				sql += "planeID = " + planeID + " AND ";
+			
+			if(pilotID.compareTo("") != 0)
+				sql += "pilotID = " + pilotID + " AND ";
+			
+			if(gateID.compareTo("") != 0)
+				sql += "gateID = \"" + gateID + "\" AND ";
+			
+			sql = sql.substring(0, sql.length()-4);
 
 		}
 
@@ -364,7 +363,7 @@ public class FlightAdmin extends Admin{
 		
 		// Create frame
 		final JFrame frame = new JFrame();
-		frame.setBounds(400, 100, 700, 500);
+		frame.setBounds(400, 100, 500, 500);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 		JPanel panel = new JPanel();
@@ -400,9 +399,8 @@ public class FlightAdmin extends Admin{
 
 		// fill table
 		final JTable table = new JTable(data, columnNames);
-		table.setPreferredScrollableViewportSize(new Dimension(650, 300));
+		table.setPreferredScrollableViewportSize(new Dimension(450, 300));
 		table.setFillsViewportHeight(true);
-                table.getColumnModel().getColumn(1).setPreferredWidth(120);
 		JScrollPane scrollPane = new JScrollPane(table);
 		JLabel text = new JLabel("Edit database except for PilotID");
 		panel.add(text);

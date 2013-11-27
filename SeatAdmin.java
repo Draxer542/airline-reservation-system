@@ -254,13 +254,15 @@ public class SeatAdmin extends Admin{
                                 sql = sql + " WHERE ";
 			//append specified attribute to sql
 			if(seatID.compareTo("") != 0)
-				sql = sql + "sID = \"" + seatID + "\" ";
-                        else if(row.compareTo("") != 0)
-				sql = sql + "row = \"" + row + "\" ";
-                        else if(seatNo.compareTo("") != 0)
-				sql = sql + "seatNo = " + seatNo;
-                        else if(planeID.compareTo("") != 0)
-				sql = sql + "planeID = \"" + planeID + "\"";
+				sql = sql + "sID = \"" + seatID + "\" AND ";
+            if(row.compareTo("") != 0)
+				sql = sql + "row = \"" + row + "\" AND ";
+            if(seatNo.compareTo("") != 0)
+				sql = sql + "seatNo = " + seatNo + " AND ";
+            if(planeID.compareTo("") != 0)
+				sql = sql + "planeID = \"" + planeID + "\" AND ";
+			
+			sql = sql.substring(0, sql.length() - 4);
                         
 			
 		}

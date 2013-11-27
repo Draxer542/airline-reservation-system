@@ -34,7 +34,7 @@ public class PilotAdmin extends Admin{
 	 */
 	public void admin(){
 		
-		final JFrame frame = new JFrame("Admin - Pilot");
+		final JFrame frame = new JFrame();
 		frame.setVisible(true);
 		frame.setBounds(200, 200, 578, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -66,7 +66,7 @@ public class PilotAdmin extends Admin{
 		//call addPilot if view button is clicked and fields are not empty
 		btnAdd.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				if(addPilot(nameField.getText(), expField.getText() + ""))
+				if(add(nameField.getText(), expField.getText() + ""))
                                     JOptionPane.showMessageDialog(frame, "Pilot " + nameField.getText() + " has been added to database.");
                                 else
                                     JOptionPane.showMessageDialog(frame, "Please enter pilot name and years of experience!");
@@ -90,7 +90,7 @@ public class PilotAdmin extends Admin{
                                             compareExp = -1;
                                         else
                                             compareExp = 0;
-                                        viewPilots(nameField.getText(), pilotField.getText() +"", expField.getText() + "", compareExp);
+                                        view(nameField.getText(), pilotField.getText() +"", expField.getText() + "", compareExp);
                                 }
                         }
 		});
@@ -99,7 +99,7 @@ public class PilotAdmin extends Admin{
 		btnDelete.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent ae){
                         try {
-                                if(deletePilot(nameField.getText(), pilotField.getText() + ""))
+                                if(delete(nameField.getText(), pilotField.getText() + ""))
                                         JOptionPane.showMessageDialog(frame, "Pilot " + nameField.getText() + " " + pilotField.getText() + " has been deleted database.");
                                 else
                                         JOptionPane.showMessageDialog(frame, "Please enter pilot name or pilot ID that exists in the database!");
@@ -189,7 +189,7 @@ public class PilotAdmin extends Admin{
 
 	}
 	
-        public boolean addPilot(String name, String exp)
+        public boolean add(String name, String exp)
         {
                 ResultSet rs;
 		int maxID = 0;
@@ -230,7 +230,7 @@ public class PilotAdmin extends Admin{
 	 * @param pID - id of pilot to find
 	 * @param exp - exp of pilot to find
 	 */
-	public void viewPilots(String name, String pID, String exp, int compareExp){
+	public void view(String name, String pID, String exp, int compareExp){
 		
 		ResultSet rs;
 		
@@ -244,15 +244,17 @@ public class PilotAdmin extends Admin{
 			
 			//append specified attribute to sql
 			if(name.compareTo("") != 0)
-				sql = sql + "pName = \"" + name + "\" ";
-                        else if(pID.compareTo("") != 0)
-				sql = sql + "pilotID = " + pID + " ";
-                        else if(exp.compareTo("") != 0 && compareExp == 0)
-				sql = sql + "yrExp = " + exp;
-                        else if(exp.compareTo("") != 0 && compareExp > 0)
-				sql = sql + "yrExp > " + exp;
-                        else if(exp.compareTo("") != 0 && compareExp < 0)
-				sql = sql + "yrExp < " + exp;
+				sql = sql + "pName = \"" + name + "\" AND ";
+            if(pID.compareTo("") != 0)
+				sql = sql + "pilotID = " + pID + " AND ";
+            if(exp.compareTo("") != 0 && compareExp == 0)
+				sql = sql + "yrExp = " + exp + " AND ";
+            else if(exp.compareTo("") != 0 && compareExp > 0)
+				sql = sql + "yrExp > " + exp + " AND ";
+            else if(exp.compareTo("") != 0 && compareExp < 0)
+				sql = sql + "yrExp < " + exp + " AND ";
+			
+			sql = sql.substring(0, sql.length()- 4);
 			
 		}
 		
@@ -311,17 +313,12 @@ public class PilotAdmin extends Admin{
 			{
                                 int row = e.getFirstRow();
                                 int column = e.getColumn();
-                                if(column == 1)
-                                        JOptionPane.showMessageDialog(frame, "Cannot change pilotID");
-                                else
-                                {
-                                        TableModel model = (TableModel)e.getSource();                                
-                                        String columnName = model.getColumnName(column);
-                                        Object data = model.getValueAt(row, column);
-                                        int pilotID = (int) table.getValueAt(row, 1);				
-                                        editPilot(columnName, data, pilotID);
-                                }
-                                        
+                                TableModel model = (TableModel)e.getSource();
+                                String columnName = model.getColumnName(column);
+                                Object data = model.getValueAt(row, column);
+                                int pilotID = (int) table.getValueAt(row, 1);
+				if(column != 1)
+                                    edit(columnName, data, pilotID);
 				
 			}
 		});
@@ -339,7 +336,7 @@ public class PilotAdmin extends Admin{
         /*
          * Admin edit Pilot database except for pilotID
          */
-        public void editPilot(String columnName, Object data, int pilotID){
+        public void edit(String columnName, Object data, int pilotID){
                 String sql = "UPDATE Pilot SET " + columnName + " = \"" + data + "\" WHERE pilotID = " + pilotID;
                 try {
 			connect.executeUpdate(sql);
@@ -349,7 +346,7 @@ public class PilotAdmin extends Admin{
 		}
         }
 	
-        public boolean deletePilot(String name, String id) throws SQLException
+        public boolean delete(String name, String id) throws SQLException
         {
                 if(name.equals("") && id.equals(""))
                         return false;
@@ -384,6 +381,13 @@ public class PilotAdmin extends Admin{
                         return false;
 		}
         }
-        
+
+
+		
+
+
+
+
+		        
        
 }

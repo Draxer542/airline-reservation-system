@@ -256,16 +256,16 @@ public class PassengerAdmin extends Admin{
                                 sql = sql + " WHERE ";
 			//append specified attribute to sql
 			if(name.compareTo("") != 0)
-				sql = sql + "name = \"" + name + "\" ";
-                        else if(age.compareTo("") != 0)
-				sql = sql + "age = " + age + " ";
-                        else if(flightID.compareTo("") != 0)
-				sql = sql + "flightID = " + flightID;
-                        else if(seatID.compareTo("") != 0)
-				sql = sql + "seatID = \"" + seatID + "\"";
-                        else if(seatID.compareTo("") != 0)
-				sql = sql + "seatID = \"" + seatID + "\"";
+				sql = sql + "name = \"" + name + "\" AND ";
+            if(age.compareTo("") != 0)
+				sql = sql + "age = " + age + " AND ";
+            if(flightID.compareTo("") != 0)
+				sql = sql + "flightID = " + flightID + " AND ";
+            if(seatID.compareTo("") != 0)
+				sql = sql + "seatID = \"" + seatID + "\" AND ";
+           
                         
+			sql = sql.substring(0, sql.length() - 4);
 			
 		}
 		

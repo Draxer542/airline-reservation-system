@@ -30,19 +30,20 @@ public class PlaneAdmin extends Admin{
 	
 public void admin(){
 		
-		final JFrame frame = new JFrame("Admin - Plane");
+		final JFrame frame = new JFrame();
 		frame.setVisible(true);
-		frame.setBounds(200, 200, 578, 256);
+		frame.setBounds(100, 100, 578, 256);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		JLabel lblNewLabel = new JLabel("Please enter information about the pilot. Leave fields blank if you wish to view all pilots.");
+		JLabel lblNewLabel = new JLabel("Please enter information about the plane. Leave fields blank if you wish to view all planes.");
 		
 		JLabel label = new JLabel("");
 		
 		JButton btnAdd = new JButton("Add");
 		
+		JButton btnEdit = new JButton("Edit");
 		
-		JButton btnView = new JButton("View and Edit");
+		JButton btnView = new JButton("View");
 		
 		
 		
@@ -64,7 +65,11 @@ public void admin(){
 		
 		final JCheckBox youngerBox = new JCheckBox("Younger Than");
 		
-		
+		btnCloseWindow.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				frame.dispose();
+			}
+		});
 		
 		btnDelete.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent ae){
@@ -92,6 +97,8 @@ public void admin(){
 		});
 		
 		
+		
+		
 		btnView.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent ae){
                                 if(!ageField.getText().equals("") && olderBox.isSelected() && youngerBox.isSelected())
@@ -111,12 +118,6 @@ public void admin(){
                         }
 		});
 		
-                btnCloseWindow.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				frame.dispose();
-
-			}
-		});
 		
 		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
 		groupLayout.setHorizontalGroup(
@@ -139,16 +140,17 @@ public void admin(){
 								.addGroup(groupLayout.createSequentialGroup()
 									.addComponent(btnAdd)
 									.addGap(34)
-									.addComponent(btnView)))
+									.addComponent(btnEdit)))
 							.addGap(33)
 							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 								.addComponent(olderBox)
-								.addComponent(btnDelete))
+								.addComponent(btnView))
 							.addGap(18)
 							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 								.addGroup(groupLayout.createSequentialGroup()
-									.addComponent(btnCloseWindow)
-									.addGap(46))
+									.addComponent(btnDelete)
+									.addGap(46)
+									.addComponent(btnCloseWindow))
 								.addComponent(youngerBox))))
 					.addContainerGap(68, Short.MAX_VALUE))
 		);
@@ -170,6 +172,7 @@ public void admin(){
 					.addGap(50)
 					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
 						.addComponent(btnAdd)
+						.addComponent(btnEdit)
 						.addComponent(btnView)
 						.addComponent(btnDelete)
 						.addComponent(btnCloseWindow))
@@ -187,7 +190,7 @@ public void admin(){
 		ResultSet rs;
 
 		// default sql statement(if no attributes are specified
-		String sql = "SELECT * FROM Plane WHERE planeID = " + id + "";
+		String sql = "SELECT * FROM Flight WHERE flightID = " + id + "";
 		rs = connect.execute(sql);
 		
 		if (!rs.next()) {
@@ -195,7 +198,7 @@ public void admin(){
 		}
 
 		if (id.compareTo("") != 0)
-			sql = "DELETE FROM Plane WHERE planeID = \'" + id + "\'";
+			sql = "DELETE FROM Flight WHERE flightID = \'" + id + "\'";
 
 		try {
 			System.out.println(sql);
@@ -251,15 +254,16 @@ public void admin(){
 
 			// append specified attribute to sql
 			if (pID.compareTo("") != 0)
-				sql = sql + "planeID = " + pID + " ";
-			else if (pID.compareTo("") != 0)
-				sql = sql + "planeID = " + pID + " ";
-			else if (age.compareTo("") != 0 && compareExp == 0)
-				sql = sql + "age = " + age;
+				sql = sql + "planeID = " + pID + " AND ";
+			
+			if (age.compareTo("") != 0 && compareExp == 0)
+				sql = sql + "age = " + age + " AND ";
 			else if (age.compareTo("") != 0 && compareExp > 0)
-				sql = sql + "age > " + age;
+				sql = sql + "age > " + age +" AND ";
 			else if (age.compareTo("") != 0 && compareExp < 0)
-				sql = sql + "age < " + age;
+				sql = sql + "age < " + age + " AND ";
+			
+			sql = sql.substring(0, sql.length() - 4);
 
 		}
 
@@ -312,16 +316,14 @@ public void admin(){
 			public void tableChanged(TableModelEvent e) {
 				int row = e.getFirstRow();
 				int column = e.getColumn();
-                                if(column == 0)
-                                        JOptionPane.showMessageDialog(frame, "Cannot change planeID");
-                                else
-                                {    
-                                        TableModel model = (TableModel) e.getSource();
-                                        String columnName = model.getColumnName(column);
-                                        Object data = model.getValueAt(row, column);
-                                        String planeID = (String) table.getValueAt(row, 0);
-                                        editPlane(columnName, data, planeID);
-                                }
+				TableModel model = (TableModel) e.getSource();
+				String columnName = model.getColumnName(column);
+				Object data = model.getValueAt(row, column);
+				String planeID = (String) table.getValueAt(row, 0);
+				if (column != 1)
+					;
+				editPlane(columnName, data, planeID);
+
 			}
 		});
 		JButton closeButton = new JButton("Close");
