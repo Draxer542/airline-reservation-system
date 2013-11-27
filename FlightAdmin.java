@@ -16,6 +16,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
@@ -32,230 +33,264 @@ public class FlightAdmin extends Admin{
         
         public void admin()
         {
-                final JFrame frame = new JFrame("Admin - Flight");
-                frame.setVisible(true);
-                frame.setBounds(200, 200, 800, 300);
-                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                
-                JLabel lblNewLabel = new JLabel("Please enter information about the flight. Leave fields blank if you wish to view all flights.");
-                
-                JLabel label = new JLabel("To delete a flight, enter flightID.");
-                
-                JButton btnAdd = new JButton("Add");
-                
-                JButton btnView = new JButton("View and Edit");
-                
-                JButton btnDelete = new JButton("Delete");
-                
-                JButton btnCloseWindow = new JButton("Close Window");
-                
-                btnCloseWindow.addActionListener(new ActionListener(){
-                        public void actionPerformed(ActionEvent ae){
-                                frame.dispose();
-                        }
-                });
-                
-                JLabel flightLabel = new JLabel("Flight ID");
-                
-                final JTextField flightField = new JTextField();
-                flightField.setColumns(10);
-                
-                JLabel destLabel = new JLabel("Destination");
-                
-                final JTextField destField = new JTextField();
-                destField.setColumns(10);
-                
-                JLabel depDateLabel = new JLabel("Departure Date");
-                
-                final JTextField depDateField = new JTextField();
-                depDateField.setColumns(10);
-                
-                JLabel depTimeLabel = new JLabel("Departure Time");
-                
-                final JTextField depTimeField = new JTextField();
-                depTimeField.setColumns(10);
-                
-                JLabel planeLabel = new JLabel("Plane ID");
-                
-                final JTextField planeField = new JTextField();
-                planeField.setColumns(10);
-                
-                JLabel gateLabel = new JLabel("Gate ID");
-                
-                final JTextField gateField = new JTextField();
-                gateField.setColumns(10);
-                
-                JLabel pilotLabel = new JLabel("PilotID");
-                
-                final JTextField pilotField = new JTextField();
-                pilotField.setColumns(10);
-                
-                final JCheckBox befDateBox = new JCheckBox("Before");
-                
-                final JCheckBox afDateBox = new JCheckBox("After");
-                
-                final JCheckBox befTimeBox = new JCheckBox("Before");
-                
-                final JCheckBox afTimeBox = new JCheckBox("After");
-                
-                btnDelete.addActionListener(new ActionListener(){
-                        public void actionPerformed(ActionEvent e){
-                                try {
-                                        if(deleteFlight(flightField.getText()))
-                                                JOptionPane.showMessageDialog(frame, "Flight " + flightField.getText() +" has been deleted from the database.");
-                                        else
-                                                JOptionPane.showMessageDialog(frame, "Please enter a Flight ID that exists in the database!");
-                                } catch (SQLException e1) {
-                                        // TODO Auto-generated catch block
-                                        e1.printStackTrace();
-                                }
-                        }
-                });
-                
-                btnAdd.addActionListener(new ActionListener(){
-                        public void actionPerformed(ActionEvent e){
-                                if(!addFlight(flightField.getText(), destField.getText(), depDateField.getText(), depTimeField.getText(), planeField.getText(),
-                                                pilotField.getText(), gateField.getText()))
-                                                JOptionPane.showMessageDialog(frame, "Please enter an unused flightID, make sure your date field is in the form YYYY-MM-DD and "
-                                                                +"your time is in the form HH:MM:SS!");
+        	final JFrame frame = new JFrame("Admin - Flight");
+        	JPanel contentPane;
+        	final JTextField flightField;
+        	final JTextField planeField;
+        	final JTextField gateField;
+        	final JTextField pilotField;
+        	final JTextField destField;
+        	final JTextField depDateField;
+        	final JTextField depTimeField;
+        	final JTextField textField_7;
+        	
+        	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    		frame.setBounds(100, 100, 600, 300);
+    		frame.setVisible(true);
+    		contentPane = new JPanel();
+    		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+    		frame.setContentPane(contentPane);
+    		
+    		JLabel lblPleaseEnterInformation = new JLabel("Please enter information about the Flight. Leave fields blank if you wish to view all flights");
+    		
+    		JLabel lblToDeleteA = new JLabel("To delete a flight, only the flightID is necessary");
+    		
+    		JLabel lblFlightId = new JLabel("Flight ID");
+    		
+    		flightField = new JTextField();
+    		flightField.setColumns(10);
+    		
+    		JLabel lblPlaneId = new JLabel("Plane ID");
+    		
+    		planeField = new JTextField();
+    		planeField.setColumns(10);
+    		
+    		JLabel lblGateId = new JLabel("Gate ID");
+    		
+    		gateField = new JTextField();
+    		gateField.setColumns(10);
+    		
+    		JLabel lblPilotId = new JLabel("Pilot ID");
+    		
+    		pilotField = new JTextField();
+    		pilotField.setColumns(10);
+    		
+    		JLabel lblDestination = new JLabel("Destination");
+    		
+    		destField = new JTextField();
+    		destField.setColumns(10);
+    		
+    		JLabel lblDepartureDate = new JLabel("Departure Date");
+    		
+    		depDateField = new JTextField();
+    		depDateField.setColumns(10);
+    		
+    		final JCheckBox datebxBefore = new JCheckBox("Before");
+    		
+    		final JCheckBox datebxAfter = new JCheckBox("After");
+    		
+    		JLabel lblDepartureTime = new JLabel("Departure Time");
+    		
+    		depTimeField = new JTextField();
+    		depTimeField.setColumns(10);
+    		
+    		final JCheckBox timebxBefore_1 = new JCheckBox("Before");
+    		
+    		final JCheckBox timebxAfter_1 = new JCheckBox("After");
+    		
+    		JButton btnAdd = new JButton("Add");
+    		
+    		JButton btnViewAndEdit = new JButton("View and Edit");
+    		
+    		JButton btnDelete = new JButton("Delete");
+    		
+    		
+    		
+    		JButton btnCloseWindow = new JButton("Close Window");
+    		
+    		btnCloseWindow.addActionListener(new ActionListener(){
+    			public void actionPerformed(ActionEvent ae)
+    			{
+    				frame.dispose();
+    			}
+    		});
+    		
+    		JButton btnArchive = new JButton("Archive");
+    		
+    		JLabel lblToArchiveData = new JLabel("To archive data, enter a cut off date and click Archive");
+    		
+    		JLabel lblCutoffDateFor = new JLabel("Cutoff date for Archiving");
+    		
+    		
+    		
+    		textField_7 = new JTextField();
+    		textField_7.setColumns(10);
+    		
+    		
+    		btnDelete.addActionListener(new ActionListener(){
+                public void actionPerformed(ActionEvent e){
+                        try {
+                                if(deleteFlight(flightField.getText()))
+                                        JOptionPane.showMessageDialog(frame, "Flight " + flightField.getText() +" has been deleted from the database.");
                                 else
-                                        JOptionPane.showMessageDialog(frame, "Flight " + flightField.getText() + " has been added to database.");
+                                        JOptionPane.showMessageDialog(frame, "Please enter a Flight ID that exists in the database!");
+                        } catch (SQLException e1) {
+                                // TODO Auto-generated catch block
+                                e1.printStackTrace();
                         }
-                });
-                
-                btnView.addActionListener(new ActionListener(){
-                        public void actionPerformed(ActionEvent e){
-                                if(!depDateField.getText().equals("") && befDateBox.isSelected() && afDateBox.isSelected())
-                                        JOptionPane.showMessageDialog(frame, "Please only pick either greater or less than!");
-                                else if(!depTimeField.getText().equals("") && befTimeBox.isSelected() && afTimeBox.isSelected())
-                                        JOptionPane.showMessageDialog(frame, "Please only pick either greater or less than!");
-                                else
-                                {
-                                        int compareDate;
-                                        int compareTime;
-                                        if(befDateBox.isSelected())
-                                                compareDate = -1;
-                                        else if(afDateBox.isSelected())
-                                                compareDate = 1;
-                                        else
-                                                compareDate = 0;
-                                        if(befTimeBox.isSelected())
-                                                compareTime = -1;
-                                        else if(afTimeBox.isSelected())
-                                                compareTime = 1;
-                                        else
-                                                compareTime = 0;
-                                        viewFlights(flightField.getText(), destField.getText(), depDateField.getText(), depTimeField.getText(), planeField.getText(),
-                                                        pilotField.getText(), gateField.getText(), compareDate, compareTime);
-                        
-                                }
-                        }
-                });
-                GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
-                groupLayout.setHorizontalGroup(
-                        groupLayout.createParallelGroup(Alignment.LEADING)
-                                .addGroup(groupLayout.createSequentialGroup()
-                                        .addContainerGap()
-                                        .addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-                                                .addComponent(label)
-                                                .addComponent(lblNewLabel)
-                                                .addComponent(label)
-                                                .addGroup(groupLayout.createSequentialGroup()
-                                                        .addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-                                                                .addGroup(groupLayout.createSequentialGroup()
-                                                                        .addComponent(btnAdd)
-                                                                        .addGap(34)
-                                                                        .addComponent(btnView))
-                                                                .addGroup(groupLayout.createSequentialGroup()
-                                                                        .addComponent(flightLabel)
-                                                                        .addPreferredGap(ComponentPlacement.UNRELATED)
-                                                                        .addComponent(flightField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-                                                        .addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-                                                                .addGroup(groupLayout.createSequentialGroup()
-                                                                        .addGap(33)
-                                                                        .addComponent(btnDelete)
-                                                                        .addGap(42)
-                                                                        .addComponent(btnCloseWindow)
-                                                                        .addGap(46))
-                                                                .addGroup(groupLayout.createSequentialGroup()
-                                                                        .addGap(10)
-                                                                        .addComponent(planeLabel)
-                                                                        .addPreferredGap(ComponentPlacement.RELATED)
-                                                                        .addComponent(planeField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                                                        .addGap(10)
-                                                                        .addComponent(gateLabel)
-                                                                        .addPreferredGap(ComponentPlacement.RELATED)
-                                                                        .addComponent(gateField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                                                        .addPreferredGap(ComponentPlacement.UNRELATED)
-                                                                        .addComponent(pilotLabel)
-                                                                        .addPreferredGap(ComponentPlacement.RELATED)
-                                                                        .addComponent(pilotField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))))
-                                                .addGroup(groupLayout.createSequentialGroup()
-                                                        .addComponent(depDateLabel)
-                                                        .addPreferredGap(ComponentPlacement.RELATED)
-                                                        .addComponent(depDateField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                                        .addPreferredGap(ComponentPlacement.UNRELATED)
-                                                        .addComponent(befDateBox)
-                                                        .addPreferredGap(ComponentPlacement.UNRELATED)
-                                                        .addComponent(afDateBox))
-                                                .addGroup(groupLayout.createSequentialGroup()
-                                                        .addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-                                                                .addComponent(depTimeLabel)
-                                                                .addComponent(destLabel))
-                                                        .addPreferredGap(ComponentPlacement.RELATED)
-                                                        .addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-                                                                .addComponent(destField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                                                .addComponent(depTimeField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                                                        .addPreferredGap(ComponentPlacement.UNRELATED)
-                                                        .addComponent(befTimeBox)
-                                                        .addGap(4)
-                                                        .addComponent(afTimeBox)))
-                                        .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                );
-                groupLayout.setVerticalGroup(
-                        groupLayout.createParallelGroup(Alignment.LEADING)
-                                .addGroup(groupLayout.createSequentialGroup()
-                                        .addContainerGap()
-                                        .addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
-                                        
-                                        .addComponent(label, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
-                                        .addGap(18)
-                                        .addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-                                                .addComponent(flightLabel)
-                                                .addComponent(flightField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                                .addComponent(planeLabel)
-                                                .addComponent(planeField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                                .addComponent(gateField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                                .addComponent(gateLabel)
-                                                .addComponent(pilotLabel)
-                                                .addComponent(pilotField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                                        .addPreferredGap(ComponentPlacement.UNRELATED)
-                                        .addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-                                                .addComponent(depDateLabel)
-                                                .addComponent(depDateField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                                .addComponent(befDateBox)
-                                                .addComponent(afDateBox))
-                                        .addPreferredGap(ComponentPlacement.UNRELATED)
-                                        .addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-                                                .addComponent(depTimeLabel)
-                                                .addComponent(depTimeField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                                .addComponent(afTimeBox)
-                                                .addComponent(befTimeBox))
-                                        .addPreferredGap(ComponentPlacement.UNRELATED)
-                                        .addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-                                                .addComponent(destLabel)
-                                                .addComponent(destField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                                        .addGap(21)
-                                        .addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-                                                .addComponent(btnAdd)
-                                                .addComponent(btnView)
-                                                .addComponent(btnDelete)
-                                                .addComponent(btnCloseWindow))
-                                        .addGap(51)
-                                        .addComponent(label)
-                                        .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                );
-                frame.getContentPane().setLayout(groupLayout);
+                }
+        });
+    		
+    		 btnAdd.addActionListener(new ActionListener(){
+                 public void actionPerformed(ActionEvent e){
+                         if(!addFlight(flightField.getText(), destField.getText(), depDateField.getText(), depTimeField.getText(), planeField.getText(),
+                                         pilotField.getText(), gateField.getText()))
+                                         JOptionPane.showMessageDialog(frame, "Please enter an unused flightID, make sure your date field is in the form YYYY-MM-DD and "
+                                                         +"your time is in the form HH:MM:SS!");
+                         else
+                                 JOptionPane.showMessageDialog(frame, "Flight " + flightField.getText() + " has been added to database.");
+                 }
+         });
+         
+         btnViewAndEdit.addActionListener(new ActionListener(){
+                 public void actionPerformed(ActionEvent e){
+                         if(!depDateField.getText().equals("") && datebxBefore.isSelected() && datebxAfter.isSelected())
+                                 JOptionPane.showMessageDialog(frame, "Please only pick either greater or less than!");
+                         else if(!depTimeField.getText().equals("") && timebxBefore_1.isSelected() && timebxAfter_1.isSelected())
+                                 JOptionPane.showMessageDialog(frame, "Please only pick either greater or less than!");
+                         else
+                         {
+                                 int compareDate;
+                                 int compareTime;
+                                 if(datebxBefore.isSelected())
+                                         compareDate = -1;
+                                 else if(datebxAfter.isSelected())
+                                         compareDate = 1;
+                                 else
+                                         compareDate = 0;
+                                 if(timebxBefore_1.isSelected())
+                                         compareTime = -1;
+                                 else if(timebxAfter_1.isSelected())
+                                         compareTime = 1;
+                                 else
+                                         compareTime = 0;
+                                 viewFlights(flightField.getText(), destField.getText(), depDateField.getText(), depTimeField.getText(), planeField.getText(),
+                                                 pilotField.getText(), gateField.getText(), compareDate, compareTime);
+                 
+                         }
+                 }
+         });
+         
+    		GroupLayout gl_contentPane = new GroupLayout(contentPane);
+    		gl_contentPane.setHorizontalGroup(
+    			gl_contentPane.createParallelGroup(Alignment.LEADING)
+    				.addGroup(gl_contentPane.createSequentialGroup()
+    					.addContainerGap()
+    					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+    						.addComponent(lblPleaseEnterInformation)
+    						.addComponent(lblToDeleteA)
+    						.addGroup(gl_contentPane.createSequentialGroup()
+    							.addComponent(lblFlightId)
+    							.addPreferredGap(ComponentPlacement.RELATED)
+    							.addComponent(flightField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+    							.addPreferredGap(ComponentPlacement.UNRELATED)
+    							.addComponent(lblPlaneId)
+    							.addPreferredGap(ComponentPlacement.RELATED)
+    							.addComponent(planeField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+    							.addPreferredGap(ComponentPlacement.UNRELATED)
+    							.addComponent(lblGateId)
+    							.addPreferredGap(ComponentPlacement.RELATED)
+    							.addComponent(gateField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+    						.addGroup(gl_contentPane.createSequentialGroup()
+    							.addComponent(lblPilotId)
+    							.addPreferredGap(ComponentPlacement.UNRELATED)
+    							.addComponent(pilotField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+    							.addPreferredGap(ComponentPlacement.UNRELATED)
+    							.addComponent(lblDestination)
+    							.addPreferredGap(ComponentPlacement.RELATED)
+    							.addComponent(destField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+    						.addGroup(gl_contentPane.createSequentialGroup()
+    							.addComponent(lblDepartureDate)
+    							.addPreferredGap(ComponentPlacement.RELATED)
+    							.addComponent(depDateField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+    							.addPreferredGap(ComponentPlacement.RELATED)
+    							.addComponent(datebxBefore)
+    							.addPreferredGap(ComponentPlacement.UNRELATED)
+    							.addComponent(datebxAfter))
+    						.addGroup(gl_contentPane.createSequentialGroup()
+    							.addComponent(lblDepartureTime)
+    							.addPreferredGap(ComponentPlacement.RELATED)
+    							.addComponent(depTimeField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+    							.addPreferredGap(ComponentPlacement.RELATED)
+    							.addComponent(timebxBefore_1)
+    							.addPreferredGap(ComponentPlacement.UNRELATED)
+    							.addComponent(timebxAfter_1))
+    						.addGroup(gl_contentPane.createSequentialGroup()
+    							.addComponent(btnAdd)
+    							.addPreferredGap(ComponentPlacement.UNRELATED)
+    							.addComponent(btnViewAndEdit)
+    							.addPreferredGap(ComponentPlacement.UNRELATED)
+    							.addComponent(btnDelete)
+    							.addPreferredGap(ComponentPlacement.UNRELATED)
+    							.addComponent(btnCloseWindow)
+    							.addPreferredGap(ComponentPlacement.RELATED)
+    							.addComponent(btnArchive))
+    						.addComponent(lblToArchiveData)
+    						.addGroup(gl_contentPane.createSequentialGroup()
+    							.addComponent(lblCutoffDateFor)
+    							.addPreferredGap(ComponentPlacement.RELATED)
+    							.addComponent(textField_7, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+    					.addContainerGap(27, Short.MAX_VALUE))
+    		);
+    		gl_contentPane.setVerticalGroup(
+    			gl_contentPane.createParallelGroup(Alignment.LEADING)
+    				.addGroup(gl_contentPane.createSequentialGroup()
+    					.addContainerGap()
+    					.addComponent(lblPleaseEnterInformation)
+    					.addPreferredGap(ComponentPlacement.RELATED)
+    					.addComponent(lblToDeleteA)
+    					.addGap(3)
+    					.addComponent(lblToArchiveData)
+    					.addPreferredGap(ComponentPlacement.UNRELATED)
+    					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+    						.addComponent(lblFlightId)
+    						.addComponent(flightField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+    						.addComponent(lblPlaneId)
+    						.addComponent(planeField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+    						.addComponent(lblGateId)
+    						.addComponent(gateField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+    					.addPreferredGap(ComponentPlacement.RELATED)
+    					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+    						.addComponent(lblPilotId)
+    						.addComponent(pilotField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+    						.addComponent(lblDestination)
+    						.addComponent(destField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+    					.addPreferredGap(ComponentPlacement.UNRELATED)
+    					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+    						.addComponent(lblDepartureDate)
+    						.addComponent(depDateField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+    						.addComponent(datebxBefore)
+    						.addComponent(datebxAfter))
+    					.addPreferredGap(ComponentPlacement.RELATED)
+    					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+    						.addComponent(lblDepartureTime)
+    						.addComponent(depTimeField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+    						.addComponent(timebxBefore_1)
+    						.addComponent(timebxAfter_1))
+    					.addPreferredGap(ComponentPlacement.UNRELATED)
+    					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+    						.addComponent(lblCutoffDateFor)
+    						.addComponent(textField_7, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+    					.addPreferredGap(ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
+    					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+    						.addComponent(btnAdd)
+    						.addComponent(btnViewAndEdit)
+    						.addComponent(btnDelete)
+    						.addComponent(btnCloseWindow)
+    						.addComponent(btnArchive))
+    					.addContainerGap())
+    		);
+    		contentPane.setLayout(gl_contentPane);
         }
         
         public boolean deleteFlight(String id) throws SQLException {
